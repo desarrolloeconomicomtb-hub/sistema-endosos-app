@@ -1,0 +1,93 @@
+.dashboardLayout {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.statsOverview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statNumber {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--mtb-purple);
+  margin-top: 0.5rem;
+  line-height: 1;
+}
+
+.tableResponsive {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+  color: var(--mtb-purple-dark);
+  font-weight: 600;
+  background-color: rgba(74, 20, 140, 0.03);
+}
+
+.table tbody tr:hover {
+  background-color: var(--bg-main);
+}
+
+.badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badgePendiente {
+  background-color: #FFF3CD;
+  color: #856404;
+}
+
+.badgeAprobado {
+  background-color: #D4EDDA;
+  color: #155724;
+}
+
+.badgeDenegado {
+  background-color: #F8D7DA;
+  color: #721C24;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btnAction {
+  font-size: 0.85rem;
+  color: var(--mtb-purple);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.btnAction:hover {
+  color: var(--mtb-purple-dark);
+}

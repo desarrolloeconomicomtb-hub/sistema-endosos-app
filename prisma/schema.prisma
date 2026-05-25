@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Evento {
+  id        String   @id @default(cuid())
+  codigo    String?  @unique // e.g. "FFC"
+  nombre    String   // e.g., "Feria Fiesta y Campo 2026"
+  fechas    String   // e.g., "15, 16 y 17 de mayo de 2026"
+  ubicacion String   // e.g., "Balneario de Punta Salinas, Toa Baja, Puerto Rico"
+  endosos   Endoso[]
+  createdAt DateTime @default(now())
+}
+
+model Categoria {
+  id        String   @id @default(cuid())
+  nombre    String   // e.g., "Productos y/o Servicios"
+  endosos   Endoso[]
+  createdAt DateTime @default(now())
+}
+
+model Endoso {
+  id              String   @id @default(cuid())
+  controlNumber   String   @unique // e.g., FFC-MTB-CB-001-2026
+  
+  // Datos del Negocio
+  companyName     String   // NOMBRE DEL NEGOCIO
+  address         String?  // Legacy or optional
+  representante   String?
+  telefono        String?
+  email           String?
+  descripcion     String?
+  
+  // Event details saved per endoso
+  fechasEvento    String
+  ubicacion       String
+  tarima          String?
+
+  // Datos de Recibos de Pago
+  reciboPatente   String?
+  reciboAmbulante String?
+  reciboBebidas   String?
+  
+  // Exención de Pago
+  exentoPago      Boolean  @default(false)
+  exentoRazon     String?
+  
+  // Inspección
+  visitedAt       DateTime?
+  
+  issueDate       DateTime @default(now())
+  
+  eventoId        String
+  evento          Evento   @relation(fields: [eventoId], references: [id])
+  
+  categoriaId     String
+  categoria       Categoria @relation(fields: [categoriaId], references: [id])
+
+  status          String   @default("Emitido")
+  createdAt       DateTime @default(now())
+}
