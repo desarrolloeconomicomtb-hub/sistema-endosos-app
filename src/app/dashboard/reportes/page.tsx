@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage() {
   const endosos = await prisma.endoso.findMany({
-    orderBy: { fecha: 'desc' }
+    orderBy: { issueDate: 'desc' }
   });
 
   const totales = endosos.length;
@@ -14,25 +14,25 @@ export default async function ReportesPage() {
   // Agrupar por Tipo de Venta
   const tipoVentaCounts: Record<string, number> = {};
   endosos.forEach(e => {
-    tipoVentaCounts[e.tipo_venta] = (tipoVentaCounts[e.tipo_venta] || 0) + 1;
+    tipoVentaCounts[e.categoriaId] = (tipoVentaCounts[e.categoriaId] || 0) + 1;
   });
 
   // Agrupar por Estado
-  const estadoCounts: Record<string, number> = {};
+  const statusCounts: Record<string, number> = {};
   endosos.forEach(e => {
-    estadoCounts[e.estado] = (estadoCounts[e.estado] || 0) + 1;
+    statusCounts[e.status] = (statusCounts[e.status] || 0) + 1;
   });
 
   // Agrupar por Actividad
-  const actividadCounts: Record<string, number> = {};
+  const categoriaIdCounts: Record<string, number> = {};
   endosos.forEach(e => {
-    const act = e.actividad.trim().toUpperCase();
-    actividadCounts[act] = (actividadCounts[act] || 0) + 1;
+    const act = e.categoriaId.trim().toUpperCase();
+    categoriaIdCounts[act] = (categoriaIdCounts[act] || 0) + 1;
   });
 
   // Group full endosos by activity for the detailed breakdown
   const endososPorActividad = endosos.reduce((acc, endoso) => {
-    const act = endoso.actividad.trim().toUpperCase();
+    const act = endoso.categoriaId.trim().toUpperCase();
     if (!acc[act]) acc[act] = [];
     acc[act].push(endoso);
     return acc;
@@ -66,7 +66,7 @@ export default async function ReportesPage() {
            <div style={{border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px', backgroundColor: '#fafafa'}}>
              <h3 style={{marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem'}}>Estatus</h3>
              <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-               {Object.entries(estadoCounts).sort((a,b)=>b[1]-a[1]).map(([k, v]) => (
+               {Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]).map(([k, v]) => (
                  <li key={k} style={{display: 'flex', justifyContent: 'space-between', margin: '0.5rem 0'}}>
                    <span>{k}</span>
                    <strong style={{fontSize: '1.2rem'}}>{v}</strong>
@@ -100,7 +100,7 @@ export default async function ReportesPage() {
                </tr>
              </thead>
              <tbody>
-                {Object.entries(actividadCounts).sort((a,b)=>b[1]-a[1]).map(([k, v], i) => (
+                {Object.entries(categoriaIdCounts).sort((a,b)=>b[1]-a[1]).map(([k, v], i) => (
                   <tr key={i} style={{borderBottom: '1px solid #ddd'}}>
                     <td style={{padding: '0.75rem', textAlign: 'left'}}>{k}</td>
                     <td style={{padding: '0.75rem', textAlign: 'center', fontWeight: 'bold'}}>{v}</td>
@@ -114,12 +114,12 @@ export default async function ReportesPage() {
         <div style={{pageBreakBefore: 'auto'}}>
            <h3 style={{borderBottom: '2px solid #000', paddingBottom: '0.5rem', color: '#111'}}>Registro Detallado por Evento</h3>
            
-           {Object.keys(endososPorActividad).sort().map(actividad => {
-             const lista = endososPorActividad[actividad];
+           {Object.keys(endososPorActividad).sort().map(categoriaId => {
+             const lista = endososPorActividad[categoriaId];
              return (
-               <div key={actividad} style={{ marginBottom: '2rem' }}>
+               <div key={categoriaId} style={{ marginBottom: '2rem' }}>
                  <h4 style={{ backgroundColor: '#e2e8f0', padding: '0.5rem 1rem', borderRadius: '4px', margin: '0 0 1rem 0' }}>
-                   📍 Evento: {actividad} ({lista.length} solicitudes)
+                   📍 Evento: {categoriaId} ({lista.length} solicitudes)
                  </h4>
                  <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem'}}>
                    <thead>
@@ -132,12 +132,12 @@ export default async function ReportesPage() {
                    </thead>
                    <tbody>
                       {lista.map(e => {
-                        const esPagado = e.estado === 'Pagado' || e.estado === 'Aprobado';
+                        const esPagado = e.status === 'Pagado' || e.status === 'Aprobado';
                         return (
                           <tr key={e.id} style={{borderBottom: '1px solid #ddd'}}>
-                            <td style={{padding: '0.5rem'}}>{e.numero_control}</td>
-                            <td style={{padding: '0.5rem'}}>{e.titulo && e.titulo!=='Entidad'?e.titulo:''} {e.nombre} {e.apellidos||''}</td>
-                            <td style={{padding: '0.5rem'}}>{e.tipo_venta}</td>
+                            <td style={{padding: '0.5rem'}}>{e.controlNumber}</td>
+                            <td style={{padding: '0.5rem'}}>{e.representante && e.representante!=='Entidad'?e.representante:''} {e.companyName} {e.representante||''}</td>
+                            <td style={{padding: '0.5rem'}}>{e.categoriaId}</td>
                             <td style={{padding: '0.5rem', fontWeight: esPagado ? 'bold':'normal', color: esPagado ? '#155724' : '#856404'}}>
                               {esPagado ? '✅ Sí (Aprobado/Pagado)' : '⏳ Pendiente de Pago'}
                             </td>

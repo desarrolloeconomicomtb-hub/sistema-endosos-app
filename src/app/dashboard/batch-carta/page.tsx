@@ -11,7 +11,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
   const endosos = await prisma.endoso.findMany({ 
     where: { id: { in: idArray } },
-    orderBy: { numero_control: 'asc' }
+    orderBy: { controlNumber: 'asc' }
   });
 
   const dateOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -26,16 +26,16 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
       {endosos.map((endoso, index) => {
         let saludo = 'Estimado/a señor(a):';
-        if (endoso.titulo === 'Entidad') {
+        if (endoso.representante === 'Entidad') {
           saludo = 'Estimados señores:';
-        } else if (endoso.titulo === 'Sr.') {
-          saludo = `Estimado señor ${endoso.apellidos || endoso.nombre}:`;
-        } else if (endoso.titulo === 'Sra.') {
-          saludo = `Estimada señora ${endoso.apellidos || endoso.nombre}:`;
-        } else if (endoso.titulo === 'Srta.') {
-          saludo = `Estimada señorita ${endoso.apellidos || endoso.nombre}:`;
-        } else if (!endoso.titulo && endoso.apellidos) {
-          saludo = `Estimado/a ${endoso.apellidos}:`;
+        } else if (endoso.representante === 'Sr.') {
+          saludo = `Estimado señor ${endoso.representante || endoso.companyName}:`;
+        } else if (endoso.representante === 'Sra.') {
+          saludo = `Estimada señora ${endoso.representante || endoso.companyName}:`;
+        } else if (endoso.representante === 'Srta.') {
+          saludo = `Estimada señorita ${endoso.representante || endoso.companyName}:`;
+        } else if (!endoso.representante && endoso.representante) {
+          saludo = `Estimado/a ${endoso.representante}:`;
         }
 
         return (
@@ -85,14 +85,14 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
               <div>{formattedDate}</div>
               <div style={{ border: '1px solid #000', padding: '4px 10px', fontWeight: 'bold' }}>
-                Núm. Control: {endoso.numero_control.replace(/-/g, ' ')}
+                Núm. Control: {endoso.controlNumber.replace(/-/g, ' ')}
               </div>
             </div>
 
             {/* Addressee */}
             <div style={{ marginBottom: '30px', lineHeight: '1.2' }}>
-              <div style={{ fontWeight: 'bold' }}>{endoso.titulo && endoso.titulo !== 'Entidad' ? endoso.titulo : ''} {endoso.nombre} {endoso.apellidos || ''}</div>
-              <div>{endoso.direccion}</div>
+              <div style={{ fontWeight: 'bold' }}>{endoso.representante && endoso.representante !== 'Entidad' ? endoso.representante : ''} {endoso.companyName} {endoso.representante || ''}</div>
+              <div>{endoso.address}</div>
               <div>Toa Baja, PR 00949</div>
             </div>
 
@@ -103,11 +103,11 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
             {/* Body Paragraphs */}
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la actividad nominada <strong>{endoso.actividad}</strong> a efectuarse en los predios de {endoso.ubicacion}.
+              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoriaId nominada <strong>{endoso.categoriaId}</strong> a efectuarse en los predios de {endoso.ubicacion}.
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-              El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere un (1) quiosco provisional para la venta de <strong>{endoso.tipo_venta}</strong>. No obstante, el otorgamiento de este endoso está sujeto a que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor aplicable y realizar los trámites con el personal de la Oficina de Finanzas Municipales. Igualmente, si su intención es la venta de bebidas alcohólicas deberá obtener el endoso o licencia correspondiente otorgada por el Departamento de Hacienda para esos fines.
+              El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere un (1) quiosco provisional para la venta de <strong>{endoso.categoriaId}</strong>. No obstante, el otorgamiento de este endoso está sujeto a que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor aplicable y realizar los trámites con el personal de la Oficina de Finanzas Municipales. Igualmente, si su intención es la venta de bebidas alcohólicas deberá obtener el endoso o licencia correspondiente otorgada por el Departamento de Hacienda para esos fines.
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
@@ -115,7 +115,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '30px' }}>
-              El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta actividad tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de <strong>{endoso.actividad}</strong> las convierta en un evento que sea considerado por nuestros ciudadanos un Orgullo Llanero.
+              El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoriaId tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de <strong>{endoso.categoriaId}</strong> las convierta en un evento que sea considerado por nuestros ciudadanos un Orgullo Llanero.
             </div>
 
             {/* Closing */}
@@ -125,7 +125,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
             {/* Signature */}
             <div style={{ marginTop: '50px' }}>
-              <div style={{ fontWeight: 'bold' }}>{endoso.firmante_nombre || 'Shirley Torres Reyes'}</div>
+              <div style={{ fontWeight: 'bold' }}>{endoso.firmante_companyName || 'Shirley Torres Reyes'}</div>
               <div>{endoso.firmante_puesto || 'Ayudante Especial'}</div>
             </div>
 

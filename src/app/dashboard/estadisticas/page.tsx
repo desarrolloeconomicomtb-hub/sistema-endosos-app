@@ -22,7 +22,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     include: { _count: { select: { endosos: true } } }
   });
   const dataCategoria = endososPorCategoriaRaw
-    .map(c => ({ name: c.nombre, value: c._count.endosos }))
+    .map(c => ({ name: c.companyName, value: c._count.endosos }))
     .filter(c => c.value > 0);
 
   // Data for Event Bar Chart (General)
@@ -30,7 +30,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     include: { _count: { select: { endosos: true } } }
   });
   const dataEvento = endososPorEventoRaw
-    .map(e => ({ name: e.nombre, value: e._count.endosos }))
+    .map(e => ({ name: e.companyName, value: e._count.endosos }))
     .filter(e => e.value > 0);
 
   // Data for Pagos Chart (General)
@@ -40,13 +40,13 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
       reciboAmbulante: true,
       reciboBebidas: true,
       exentoPago: true,
-      evento: { select: { nombre: true } }
+      evento: { select: { companyName: true } }
     }
   });
 
   const pagosPorEventoMap = new Map();
   allEndosos.forEach(e => {
-    const eventoNombre = e.evento.nombre;
+    const eventoNombre = e.evento.companyName;
     if (!pagosPorEventoMap.has(eventoNombre)) {
       pagosPorEventoMap.set(eventoNombre, { name: eventoNombre, Pagados: 0, Pendientes: 0, Exentos: 0 });
     }

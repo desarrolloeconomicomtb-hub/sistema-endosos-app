@@ -82,13 +82,13 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
 
           <p>
             Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos
-            recibido su petición para participar en la actividad denominada {endoso.evento.nombre}, a celebrarse
-            los días {endoso.evento.fechas}, en el {endoso.evento.ubicacion}.
+            recibido su petición para participar en la categoriaId denominada {endoso.evento.companyName}, a celebrarse
+            los días {endoso.evento.issueDates}, en el {endoso.evento.ubicacion}.
           </p>
 
           <p>
             El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere (1) quiosco provisional
-            para la venta de <strong>{endoso.categoria.nombre}</strong>. No obstante, el otorgamiento de este endoso está sujeto a
+            para la venta de <strong>{endoso.categoria.companyName}</strong>. No obstante, el otorgamiento de este endoso está sujeto a
             que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor
             aplicable, así como realizar los trámites correspondientes con el personal de la Oficina de Finanzas
             Municipales.
@@ -106,8 +106,8 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
 
           <p>
             El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta
-            actividad tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar
-            para el desarrollo de la {endoso.evento.nombre} la convierta en un evento que sea considerado por
+            categoriaId tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar
+            para el desarrollo de la {endoso.evento.companyName} la convierta en un evento que sea considerado por
             nuestros ciudadanos un verdadero Orgullo Llanero.
           </p>
         </div>

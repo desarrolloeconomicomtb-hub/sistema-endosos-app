@@ -6,7 +6,7 @@ export default async function MarbeteEndoso({ params }: { params: Promise<{ id: 
   const endoso = await prisma.endoso.findUnique({ where: { id }});
   if(!endoso) return <div>No encontrado</div>;
 
-  const isApproved = endoso.estado === 'Aprobado';
+  const isApproved = endoso.status === 'Aprobado';
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#e5e7eb', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -35,28 +35,28 @@ export default async function MarbeteEndoso({ params }: { params: Promise<{ id: 
         <div style={{padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-around', backgroundColor: 'white'}}>
            <div style={{textAlign: 'center', marginBottom: '1rem'}}>
              <span style={{fontSize: '0.9rem', color: '#666', textTransform: 'uppercase'}}>Núm. Control</span>
-             <h1 style={{margin: '0', fontSize: '2.5rem', color: 'var(--mtb-purple)'}}>{endoso.numero_control}</h1>
+             <h1 style={{margin: '0', fontSize: '2.5rem', color: 'var(--mtb-purple)'}}>{endoso.controlNumber}</h1>
            </div>
 
            <div>
               <div style={{marginBottom: '1rem'}}>
                 <span style={{fontSize: '0.8rem', color: '#666', textTransform: 'uppercase'}}>Entidad / Solicitante</span>
-                <p style={{margin: 0, fontSize: '1.2rem', fontWeight: 'bold'}}>{endoso.nombre}</p>
+                <p style={{margin: 0, fontSize: '1.2rem', fontWeight: 'bold'}}>{endoso.companyName}</p>
               </div>
 
               <div style={{marginBottom: '1rem'}}>
                 <span style={{fontSize: '0.8rem', color: '#666', textTransform: 'uppercase'}}>Actividad</span>
-                <p style={{margin: 0, fontSize: '1.2rem'}}>{endoso.actividad}</p>
+                <p style={{margin: 0, fontSize: '1.2rem'}}>{endoso.categoriaId}</p>
               </div>
 
               <div style={{marginBottom: '1rem', display: 'flex', justifyContent: 'space-between'}}>
                 <div>
                   <span style={{fontSize: '0.8rem', color: '#666', textTransform: 'uppercase'}}>Tipo de Venta</span>
-                  <p style={{margin: 0, fontSize: '1.1rem', fontWeight: 'bold'}}>{endoso.tipo_venta}</p>
+                  <p style={{margin: 0, fontSize: '1.1rem', fontWeight: 'bold'}}>{endoso.categoriaId}</p>
                 </div>
                 <div>
                   <span style={{fontSize: '0.8rem', color: '#666', textTransform: 'uppercase'}}>Emisión</span>
-                  <p style={{margin: 0, fontSize: '1.1rem'}}>{endoso.fecha.toLocaleDateString()}</p>
+                  <p style={{margin: 0, fontSize: '1.1rem'}}>{endoso.issueDate.toLocaleDateString()}</p>
                 </div>
               </div>
            </div>

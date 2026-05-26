@@ -5,7 +5,7 @@ import PrintAction from "./PrintAction";
 export default async function PrintEndosoPage(
   props: { 
     params: Promise<{ id: string }>,
-    searchParams: Promise<{ nombre?: string, puesto?: string }>
+    searchParams: Promise<{ companyName?: string, puesto?: string }>
   }
 ) {
   const params = await props.params;
@@ -21,14 +21,14 @@ export default async function PrintEndosoPage(
 
   if (!endoso) return notFound();
 
-  const fechaActual = new Date().toLocaleDateString('es-PR', { 
+  const issueDateActual = new Date().toLocaleDateString('es-PR', { 
     year: 'numeric', 
     month: 'long', 
     day: 'numeric' 
   });
   
   // Custom or fallback firmante
-  const firmaNombre = searchParams.nombre || 'Óscar Rodríguez Estrella';
+  const firmaNombre = searchParams.companyName || 'Óscar Rodríguez Estrella';
   const firmaPuesto = searchParams.puesto || 'Vicealcalde';
 
   return (
@@ -59,7 +59,7 @@ export default async function PrintEndosoPage(
 
         {/* Date */}
         <div className="mb-4">
-          <p>{fechaActual}</p>
+          <p>{issueDateActual}</p>
         </div>
 
         {/* Control Number */}
@@ -84,7 +84,7 @@ export default async function PrintEndosoPage(
         {/* Body Paragraphs */}
         <div className="space-y-4 text-justify flex-1 text-[10.5pt]">
           <p>
-            Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la actividad denominada {endoso.evento.nombre}, a celebrarse los días {endoso.evento.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}.
+            Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoriaId denominada {endoso.evento.companyName}, a celebrarse los días {endoso.evento.issueDates || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}.
           </p>
 
           <p>
@@ -100,7 +100,7 @@ export default async function PrintEndosoPage(
           </p>
 
           <p>
-            El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta actividad tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de la {endoso.evento.nombre} la convierta en un evento que sea considerado por nuestros ciudadanos un verdadero Orgullo Llanero.
+            El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoriaId tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de la {endoso.evento.companyName} la convierta en un evento que sea considerado por nuestros ciudadanos un verdadero Orgullo Llanero.
           </p>
         </div>
 

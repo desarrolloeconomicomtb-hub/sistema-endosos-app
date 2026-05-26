@@ -5,7 +5,7 @@ import { Printer, X } from 'lucide-react';
 
 export default function PrintButton({ endosoId }: { endosoId: string }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [nombre, setNombre] = useState('Óscar Rodríguez Estrella');
+  const [companyName, setNombre] = useState('Óscar Rodríguez Estrella');
   const [puesto, setPuesto] = useState('Vicealcalde');
 
   useEffect(() => {
@@ -16,10 +16,10 @@ export default function PrintButton({ endosoId }: { endosoId: string }) {
   }, []);
 
   const handlePrint = () => {
-    localStorage.setItem('firmaNombre', nombre);
+    localStorage.setItem('firmaNombre', companyName);
     localStorage.setItem('firmaPuesto', puesto);
     
-    const url = `/dashboard/endosos/${endosoId}/print?nombre=${encodeURIComponent(nombre)}&puesto=${encodeURIComponent(puesto)}`;
+    const url = `/dashboard/endosos/${endosoId}/print?companyName=${encodeURIComponent(companyName)}&puesto=${encodeURIComponent(puesto)}`;
     window.open(url, '_blank');
     setIsOpen(false);
   };
@@ -53,7 +53,7 @@ export default function PrintButton({ endosoId }: { endosoId: string }) {
                 <label className="block text-xs font-bold text-gray-700 mb-1">NOMBRE DEL FIRMANTE</label>
                 <input 
                   type="text" 
-                  value={nombre}
+                  value={companyName}
                   onChange={(e) => setNombre(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#2e5e2e] focus:outline-none"
                 />

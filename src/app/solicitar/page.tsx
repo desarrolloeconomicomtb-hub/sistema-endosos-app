@@ -14,14 +14,14 @@ export default function SolicitarPage() {
           <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
             <label>Identificación de Solicitante / Entidad</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) 2fr 2fr', gap: '1rem', marginTop: '0.5rem' }}>
-              <select id="titulo" name="titulo" required>
+              <select id="representante" name="representante" required>
                 <option value="Sr.">Sr.</option>
                 <option value="Sra.">Sra.</option>
                 <option value="Srta.">Srta.</option>
                 <option value="Entidad">Entidad (Sin Trato)</option>
               </select>
-              <input type="text" id="nombre" name="nombre" required placeholder="Nombre (Ej. Juan / Asoc. XYZ)" />
-              <input type="text" id="apellidos" name="apellidos" placeholder="Apellidos (Dejar en blanco si es Entidad)" />
+              <input type="text" id="companyName" name="companyName" required placeholder="Nombre (Ej. Juan / Asoc. XYZ)" />
+              <input type="text" id="representante" name="representante" placeholder="Apellidos (Dejar en blanco si es Entidad)" />
             </div>
           </div>
 
@@ -36,13 +36,13 @@ export default function SolicitarPage() {
           </div>
 
           <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-            <label htmlFor="direccion">Dirección Postal o Física</label>
-            <input type="text" id="direccion" name="direccion" required placeholder="Calle, Número, Pueblo, Código Postal" />
+            <label htmlFor="address">Dirección Postal o Física</label>
+            <input type="text" id="address" name="address" required placeholder="Calle, Número, Pueblo, Código Postal" />
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="actividad">Nombre de la Actividad</label>
-            <input type="text" id="actividad" name="actividad" required placeholder="Ej. Fiestas Patronales / Torneo Softball" />
+            <label htmlFor="categoriaId">Nombre de la Actividad</label>
+            <input type="text" id="categoriaId" name="categoriaId" required placeholder="Ej. Fiestas Patronales / Torneo Softball" />
           </div>
 
           <div className={styles.formGroup}>
@@ -51,8 +51,8 @@ export default function SolicitarPage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="tipo_venta">Tipo de Venta</label>
-            <select id="tipo_venta" name="tipo_venta" required>
+            <label htmlFor="categoriaId">Tipo de Venta</label>
+            <select id="categoriaId" name="categoriaId" required>
               <option value="">-- Seleccione el tipo --</option>
               <option value="Comida">Comida (o Comida y Refrescos)</option>
               <option value="Bebida">Bebidas Alcohólicas</option>

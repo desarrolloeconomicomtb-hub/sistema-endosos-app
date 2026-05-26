@@ -78,11 +78,11 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
             <div className="grid grid-cols-2 gap-8 w-full mt-4 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
               <div className="text-right">
                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Evento Especial</p>
-                 <p className="text-2xl font-bold text-[#2e5e2e]">{endoso.evento.nombre}</p>
+                 <p className="text-2xl font-bold text-[#2e5e2e]">{endoso.evento.companyName}</p>
               </div>
               <div className="text-left border-l-4 border-[#2e5e2e] pl-8">
                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Categoría</p>
-                 <p className="text-2xl font-bold text-gray-800">{endoso.categoria.nombre}</p>
+                 <p className="text-2xl font-bold text-gray-800">{endoso.categoria.companyName}</p>
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
           <div className="text-left">
             <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">Número de Control Oficial</p>
             <p className="font-mono text-3xl font-black text-gray-800 tracking-wider bg-gray-100 px-3 py-1 rounded inline-block">{endoso.controlNumber}</p>
-            <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las fechas: <span className="text-gray-800">{endoso.fechasEvento}</span></p>
+            <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las issueDates: <span className="text-gray-800">{endoso.issueDatesEvento}</span></p>
           </div>
           <div className="bg-white p-3 border-4 border-[#2e5e2e] rounded-xl shadow-lg flex flex-col items-center">
             <a href={verificationUrl} target="_blank" rel="noreferrer" title="Clic para probar la validación">

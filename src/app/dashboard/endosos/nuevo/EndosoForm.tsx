@@ -61,7 +61,7 @@ export default function EndosoForm({ eventos = [], initialData }: { eventos?: an
             />
             <datalist id="eventos-list">
               {eventos.map((ev) => (
-                <option key={ev.codigo} value={ev.codigo || ''}>{ev.codigo} ({ev.nombre})</option>
+                <option key={ev.codigo} value={ev.codigo || ''}>{ev.codigo} ({ev.companyName})</option>
               ))}
             </datalist>
           </div>
@@ -148,7 +148,7 @@ export default function EndosoForm({ eventos = [], initialData }: { eventos?: an
             FECHAS EVENTO
           </div>
           <div>
-            <input type="text" name="fechasEvento" defaultValue={initialData?.fechasEvento || "15-17 mayo"} className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+            <input type="text" name="issueDatesEvento" defaultValue={initialData?.issueDatesEvento || "15-17 mayo"} className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
           </div>
         </div>
         

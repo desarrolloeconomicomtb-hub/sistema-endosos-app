@@ -21,17 +21,17 @@ export async function createEndoso(formData: FormData) {
   const email = formData.get('email') as string;
   const descripcion = formData.get('descripcion') as string;
   
-  const fechasEvento = formData.get('fechasEvento') as string;
+  const issueDatesEvento = formData.get('issueDatesEvento') as string;
   const ubicacion = formData.get('ubicacion') as string;
   const tarima = formData.get('tarima') as string | null;
 
   const eventoCode = formData.get('eventoCode') as string;
   const tipoCode = formData.get('tipoCode') as string;
 
-  let evento = await prisma.evento.findFirst({ where: { nombre: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
+  let evento = await prisma.evento.findFirst({ where: { companyName: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
   if (!evento) {
     evento = await prisma.evento.create({
-      data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: fechasEvento, ubicacion: ubicacion }
+      data: { codigo: eventoCode, companyName: `Evento ${eventoCode}`, issueDates: issueDatesEvento, ubicacion: ubicacion }
     });
   }
   
@@ -46,10 +46,10 @@ export async function createEndoso(formData: FormData) {
     default: categoriaNombre = tipoCode; break;
   }
   
-  let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
+  let categoria = await prisma.categoria.findFirst({ where: { companyName: { contains: categoriaNombre.substring(0, 4) } } });
   if (!categoria) {
     categoria = await prisma.categoria.create({
-      data: { nombre: categoriaNombre }
+      data: { companyName: categoriaNombre }
     });
   }
 
@@ -73,7 +73,7 @@ export async function createEndoso(formData: FormData) {
       telefono,
       email,
       descripcion,
-      fechasEvento,
+      issueDatesEvento,
       ubicacion,
       tarima: tarima || null,
       eventoId: evento.id,
@@ -96,7 +96,7 @@ export async function updateEndoso(id: string, formData: FormData) {
   const email = formData.get('email') as string;
   const descripcion = formData.get('descripcion') as string;
   
-  const fechasEvento = formData.get('fechasEvento') as string;
+  const issueDatesEvento = formData.get('issueDatesEvento') as string;
   const ubicacion = formData.get('ubicacion') as string;
   const tarima = formData.get('tarima') as string | null;
 
@@ -115,7 +115,7 @@ export async function updateEndoso(id: string, formData: FormData) {
       telefono,
       email,
       descripcion,
-      fechasEvento,
+      issueDatesEvento,
       ubicacion,
       tarima: tarima || null,
       reciboPatente: exentoPago ? null : (reciboPatente || null),

@@ -26,12 +26,12 @@ export default async function ChecklistEndoso({ params }: { params: Promise<{ id
         
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
            <div>
-             <strong>Solicitante:</strong> {endoso.nombre}<br/>
-             <strong>Actividad:</strong> {endoso.actividad}
+             <strong>Solicitante:</strong> {endoso.companyName}<br/>
+             <strong>Actividad:</strong> {endoso.categoriaId}
            </div>
            <div style={{textAlign: 'right'}}>
-             <strong>Control:</strong> {endoso.numero_control}<br/>
-             <strong>Fecha Radicación:</strong> {endoso.fecha.toLocaleDateString()}
+             <strong>Control:</strong> {endoso.controlNumber}<br/>
+             <strong>Fecha Radicación:</strong> {endoso.issueDate.toLocaleDateString()}
            </div>
         </div>
 
