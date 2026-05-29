@@ -15,7 +15,15 @@ const getRealPrismaClient = (): PrismaClient => {
     hasTursoUrl: !!tursoUrl,
     tursoUrlValue: tursoUrl,
     hasTursoToken: !!tursoToken,
+    databaseUrl: env['DATABASE_URL'],
   });
+
+  // Ensure process.env.DATABASE_URL is set to a valid SQLite connection string at runtime.
+  // Prisma requires a valid URL in the schema-defined environment variable even when a driver adapter is used.
+  if (!env['DATABASE_URL'] || env['DATABASE_URL'] === 'undefined' || env['DATABASE_URL'] === '') {
+    console.log("DATABASE_URL is missing or undefined. Setting fallback SQLite URL...");
+    process.env['DATABASE_URL'] = 'file:./dev.db';
+  }
 
   if (tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "") {
     console.log("Initializing Prisma Client with LibSQL (Turso) Adapter...");
