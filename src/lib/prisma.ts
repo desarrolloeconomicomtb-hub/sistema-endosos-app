@@ -2,14 +2,30 @@ import { PrismaClient } from '@prisma/client';
 import { createClient } from '@libsql/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
 
+export const initDebug = {
+  log: [] as string[],
+  tursoUrl: null as any,
+  tursoToken: null as any,
+  databaseUrl: null as any,
+  hasInstance: false,
+};
+
 let prismaInstance: PrismaClient | undefined;
 
 const getRealPrismaClient = (): PrismaClient => {
-  if (prismaInstance) return prismaInstance;
+  if (prismaInstance) {
+    initDebug.hasInstance = true;
+    return prismaInstance;
+  }
 
   const env = process.env;
   const tursoUrl = env['TURSO_DATABASE_URL'];
   const tursoToken = env['TURSO_AUTH_TOKEN'];
+
+  initDebug.log.push("Initializing getRealPrismaClient...");
+  initDebug.tursoUrl = tursoUrl;
+  initDebug.tursoToken = tursoToken ? `present(len:${tursoToken.length})` : 'missing';
+  initDebug.databaseUrl = env['DATABASE_URL'];
 
   console.log("Lazy initializing PrismaClient. Env check:", {
     hasTursoUrl: !!tursoUrl,
