@@ -52,10 +52,17 @@ export default function DashboardLayout({
         </nav>
 
         <div className="p-3">
-          <button className="flex items-center gap-3 px-3 py-1.5 w-full text-left text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-md transition-colors">
-            <Settings className="w-4 h-4" />
+          <Link 
+            href="/dashboard/configuracion"
+            className={`flex items-center gap-3 px-3 py-1.5 w-full text-left text-sm rounded-md transition-colors ${
+              pathname === '/dashboard/configuracion'
+                ? 'bg-gray-200/50 text-black font-medium'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+          >
+            <Settings className={`w-4 h-4 ${pathname === '/dashboard/configuracion' ? 'text-black' : 'text-gray-500'}`} />
             Configuración
-          </button>
+          </Link>
         </div>
       </aside>
 

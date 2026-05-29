@@ -117,11 +117,11 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
                       {endoso.companyName}
                     </td>
                     <td className="px-5 py-3.5 text-gray-600">
-                      {endoso.evento.companyName}
+                      {endoso.evento.nombre}
                     </td>
                     <td className="px-5 py-3.5">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-                        {endoso.categoria.companyName}
+                        {endoso.categoria.nombre}
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-gray-500">

@@ -28,10 +28,10 @@ export async function createEndoso(formData: FormData) {
   const eventoCode = formData.get('eventoCode') as string;
   const tipoCode = formData.get('tipoCode') as string;
 
-  let evento = await prisma.evento.findFirst({ where: { companyName: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
+  let evento = await prisma.evento.findFirst({ where: { nombre: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
   if (!evento) {
     evento = await prisma.evento.create({
-      data: { codigo: eventoCode, companyName: `Evento ${eventoCode}`, issueDates: issueDatesEvento, ubicacion: ubicacion }
+      data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: issueDatesEvento, ubicacion: ubicacion }
     });
   }
   
@@ -46,10 +46,10 @@ export async function createEndoso(formData: FormData) {
     default: categoriaNombre = tipoCode; break;
   }
   
-  let categoria = await prisma.categoria.findFirst({ where: { companyName: { contains: categoriaNombre.substring(0, 4) } } });
+  let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
   if (!categoria) {
     categoria = await prisma.categoria.create({
-      data: { companyName: categoriaNombre }
+      data: { nombre: categoriaNombre }
     });
   }
 
