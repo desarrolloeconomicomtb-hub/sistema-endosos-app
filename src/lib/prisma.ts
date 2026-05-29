@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { createClient } from '@libsql/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
 
 let prismaInstance: PrismaClient | undefined;
 
@@ -23,7 +23,7 @@ const getRealPrismaClient = (): PrismaClient => {
       url: tursoUrl,
       authToken: tursoToken,
     });
-    const adapter = new PrismaLibSql(libsql);
+    const adapter = new PrismaLibSQL(libsql);
     prismaInstance = new PrismaClient({ adapter });
   } else {
     console.log("Initializing standard Prisma Client (Local SQLite)...");
