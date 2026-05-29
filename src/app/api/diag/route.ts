@@ -33,6 +33,11 @@ export async function GET() {
       previewValue: process.env.DATABASE_URL 
         ? `${process.env.DATABASE_URL.substring(0, 10)}...` 
         : null
+    },
+    git: {
+      commitSha: process.env.VERCEL_GIT_COMMIT_SHA || null,
+      commitMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE || null,
+      deploymentId: process.env.VERCEL_DEPLOYMENT_ID || null
     }
   };
 
