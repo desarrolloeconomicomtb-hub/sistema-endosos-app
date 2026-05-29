@@ -2,47 +2,46 @@ import { PrismaClient } from '@prisma/client';
 import { createClient } from '@libsql/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+let prismaInstance: PrismaClient | undefined;
 
-const getPrismaClient = () => {
+const getRealPrismaClient = (): PrismaClient => {
+  if (prismaInstance) return prismaInstance;
+
   const tursoUrl = process.env.TURSO_DATABASE_URL;
   const tursoToken = process.env.TURSO_AUTH_TOKEN;
-  const dbUrl = process.env.DATABASE_URL;
 
-  console.log("getPrismaClient initialized. Env check:", {
+  console.log("Lazy initializing PrismaClient. Env check:", {
     hasTursoUrl: !!tursoUrl,
-    tursoUrlValueType: typeof tursoUrl,
-    tursoUrlLength: tursoUrl ? tursoUrl.length : 0,
-    isTursoUrlStringUndefined: tursoUrl === "undefined",
     hasTursoToken: !!tursoToken,
-    hasDbUrl: !!dbUrl,
-    dbUrlLength: dbUrl ? dbUrl.length : 0,
-    isDbUrlStringUndefined: dbUrl === "undefined",
+    nodeEnv: process.env.NODE_ENV,
+    isVercel: !!process.env.VERCEL
   });
 
-  if (tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "" && tursoToken && tursoToken !== "undefined" && tursoToken !== "") {
-    console.log("Using Prisma adapter for LibSQL (Turso)...");
+  // If we have Turso credentials, or if we are on Vercel (where we must use Turso)
+  if ((tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "") || process.env.VERCEL) {
+    console.log("Initializing Prisma Client with LibSQL (Turso) Adapter...");
     const libsql = createClient({
-      url: tursoUrl,
+      url: tursoUrl || "libsql://dummy-url.turso.io", // fallback dummy url to prevent constructor throw
       authToken: tursoToken,
     });
     const adapter = new PrismaLibSql(libsql);
-    return new PrismaClient({ 
-      adapter,
-      datasources: {
-        db: {
-          url: "file:./dev.db"
-        }
-      }
-    });
+    prismaInstance = new PrismaClient({ adapter });
+  } else {
+    console.log("Initializing standard Prisma Client (Local SQLite)...");
+    prismaInstance = new PrismaClient();
   }
 
-  console.log("Falling back to standard PrismaClient...");
-  return new PrismaClient();
+  return prismaInstance;
 };
 
-export const prisma = globalForPrisma.prisma ?? getPrismaClient();
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Export a Proxy that forwards all operations to the dynamically resolved PrismaClient
+export const prisma = new Proxy({} as PrismaClient, {
+  get(target, prop, receiver) {
+    const client = getRealPrismaClient();
+    const value = Reflect.get(client, prop, receiver);
+    if (typeof value === 'function') {
+      return value.bind(client);
+    }
+    return value;
+  }
+});
