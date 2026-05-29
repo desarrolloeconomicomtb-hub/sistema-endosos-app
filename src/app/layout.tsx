@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Sistema para la gestión y emisión de endosos oficiales",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{
