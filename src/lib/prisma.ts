@@ -29,7 +29,14 @@ const getPrismaClient = () => {
       authToken: tursoToken,
     });
     const adapter = new PrismaLibSql(libsql);
-    return new PrismaClient({ adapter });
+    return new PrismaClient({ 
+      adapter,
+      datasources: {
+        db: {
+          url: "file:./dev.db"
+        }
+      }
+    });
   }
 
   console.log("Falling back to standard PrismaClient...");
