@@ -43,11 +43,10 @@ const getRealPrismaClient = (): PrismaClient => {
 
   if (tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "") {
     console.log("Initializing Prisma Client with LibSQL (Turso) Adapter...");
-    const libsql = createClient({
+    const adapter = new PrismaLibSQL({
       url: tursoUrl,
       authToken: tursoToken,
     });
-    const adapter = new PrismaLibSQL(libsql);
     prismaInstance = new PrismaClient({ adapter });
   } else {
     console.log("Initializing standard Prisma Client (Local SQLite)...");
