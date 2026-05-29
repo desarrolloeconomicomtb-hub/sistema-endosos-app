@@ -7,23 +7,20 @@ let prismaInstance: PrismaClient | undefined;
 const getRealPrismaClient = (): PrismaClient => {
   if (prismaInstance) return prismaInstance;
 
-  // Use bracket notation to prevent Next.js/Webpack from inlining these variables at build time
   const env = process.env;
   const tursoUrl = env['TURSO_DATABASE_URL'];
   const tursoToken = env['TURSO_AUTH_TOKEN'];
 
   console.log("Lazy initializing PrismaClient. Env check:", {
     hasTursoUrl: !!tursoUrl,
+    tursoUrlValue: tursoUrl,
     hasTursoToken: !!tursoToken,
-    nodeEnv: env['NODE_ENV'],
-    isVercel: !!env['VERCEL']
   });
 
-  // If we have Turso credentials, or if we are on Vercel (where we must use Turso)
-  if ((tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "") || env['VERCEL']) {
+  if (tursoUrl && tursoUrl !== "undefined" && tursoUrl !== "") {
     console.log("Initializing Prisma Client with LibSQL (Turso) Adapter...");
     const libsql = createClient({
-      url: tursoUrl || "libsql://dummy-url.turso.io", // fallback dummy url to prevent constructor throw
+      url: tursoUrl,
       authToken: tursoToken,
     });
     const adapter = new PrismaLibSql(libsql);
