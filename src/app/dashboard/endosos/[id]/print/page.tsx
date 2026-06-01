@@ -86,7 +86,7 @@ export default async function PrintEndosoPage(
         {/* Body Paragraphs */}
         <div className="space-y-4 text-justify flex-1 text-[10.5pt]">
           <p>
-            Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoriaId denominada {endoso.evento.companyName}, a celebrarse los días {endoso.evento.issueDates || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}.
+            Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría denominada {endoso.evento?.nombre || 'Evento No Asignado'}, a celebrarse los días {endoso.evento?.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento?.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}.
           </p>
 
           <p>
@@ -102,7 +102,7 @@ export default async function PrintEndosoPage(
           </p>
 
           <p>
-            El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoriaId tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de la {endoso.evento.companyName} la convierta en un evento que sea considerado por nuestros ciudadanos un verdadero Orgullo Llanero.
+            El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoría tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de la {endoso.evento?.nombre || 'Evento Especial'} la convierta en un evento que sea considerado por nuestros ciudadanos un verdadero Orgullo Llanero.
           </p>
         </div>
 
