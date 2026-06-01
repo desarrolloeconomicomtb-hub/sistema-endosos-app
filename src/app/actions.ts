@@ -31,7 +31,7 @@ export async function createEndoso(formData: FormData) {
     const eventoCode = formData.get('eventoCode') as string;
     const tipoCode = formData.get('tipoCode') as string;
 
-    let evento = await prisma.evento.findFirst({ where: { nombre: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
+    let evento = await prisma.evento.findUnique({ where: { codigo: eventoCode } });
     if (!evento) {
       evento = await prisma.evento.create({
         data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: issueDatesEvento, ubicacion: ubicacion }
