@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createEndoso, getNextSequence, updateEndoso } from '@/app/actions';
 import { FileEdit } from 'lucide-react';
 
-export default function EndosoForm({ eventos = [], initialData }: { eventos?: any[], initialData?: any }) {
+export default function EndosoForm({ eventos = [], initialData, error }: { eventos?: any[], initialData?: any, error?: string }) {
   const [evento, setEvento] = useState(() => initialData ? initialData.controlNumber.split('-')[0] : 'FFC');
   const [tipo, setTipo] = useState(() => initialData ? initialData.controlNumber.split('-')[2] : 'CO');
   const [controlNumber, setControlNumber] = useState(initialData?.controlNumber || 'Generando...');
@@ -37,6 +37,13 @@ export default function EndosoForm({ eventos = [], initialData }: { eventos?: an
         <FileEdit className="w-5 h-5" />
         {initialData ? 'EDICIÓN DE ENDOSO' : 'ENTRADA DE DATOS - NUEVO ENDOSO'}
       </div>
+
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm text-red-700 text-sm flex items-start gap-2">
+          <span className="font-bold">Error:</span>
+          <span>{decodeURIComponent(error)}</span>
+        </div>
+      )}
 
       <input type="hidden" name="controlNumber" value={controlNumber} />
       <input type="hidden" name="eventoCode" value={evento} />

@@ -15,118 +15,142 @@ export async function getNextSequence(eventoCode: string) {
 }
 
 export async function createEndoso(formData: FormData) {
-  const companyName = formData.get('companyName') as string;
-  const representante = formData.get('representante') as string;
-  const telefono = formData.get('telefono') as string;
-  const email = formData.get('email') as string;
-  const descripcion = formData.get('descripcion') as string;
-  
-  const issueDatesEvento = formData.get('issueDatesEvento') as string;
-  const ubicacion = formData.get('ubicacion') as string;
-  const tarima = formData.get('tarima') as string | null;
+  let success = false;
+  let errorMsg = '';
+  try {
+    const companyName = formData.get('companyName') as string;
+    const representante = formData.get('representante') as string;
+    const telefono = formData.get('telefono') as string;
+    const email = formData.get('email') as string;
+    const descripcion = formData.get('descripcion') as string;
+    
+    const issueDatesEvento = formData.get('issueDatesEvento') as string;
+    const ubicacion = formData.get('ubicacion') as string;
+    const tarima = formData.get('tarima') as string | null;
 
-  const eventoCode = formData.get('eventoCode') as string;
-  const tipoCode = formData.get('tipoCode') as string;
+    const eventoCode = formData.get('eventoCode') as string;
+    const tipoCode = formData.get('tipoCode') as string;
 
-  let evento = await prisma.evento.findFirst({ where: { nombre: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
-  if (!evento) {
-    evento = await prisma.evento.create({
-      data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: issueDatesEvento, ubicacion: ubicacion }
-    });
-  }
-  
-  let categoriaNombre = '';
-  switch(tipoCode) {
-    case 'CO': categoriaNombre = 'Comida'; break;
-    case 'BE': categoriaNombre = 'Bebida'; break;
-    case 'AR': categoriaNombre = 'Artesanías'; break;
-    case 'PS': categoriaNombre = 'Productos y/o Servicios'; break;
-    case 'PICA': categoriaNombre = 'Pica'; break;
-    case 'MISC': categoriaNombre = 'Misceláneos'; break;
-    default: categoriaNombre = tipoCode; break;
-  }
-  
-  let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
-  if (!categoria) {
-    categoria = await prisma.categoria.create({
-      data: { nombre: categoriaNombre }
-    });
-  }
-
-  // Generate control number securely on the server
-  const nextSeq = await getNextSequence(eventoCode);
-  const year = new Date().getFullYear();
-  const controlNumber = `${eventoCode}-MTB-${tipoCode}-${nextSeq.toString().padStart(3, '0')}-${year}`;
-
-  const reciboPatente = formData.get('reciboPatente') as string | null;
-  const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
-  const reciboBebidas = formData.get('reciboBebidas') as string | null;
-  
-  const exentoPago = formData.get('exentoPago') === 'on';
-  const exentoRazon = formData.get('exentoRazon') as string | null;
-
-  await prisma.endoso.create({
-    data: {
-      controlNumber,
-      companyName,
-      representante,
-      telefono,
-      email,
-      descripcion,
-      fechasEvento: issueDatesEvento,
-      ubicacion,
-      tarima: tarima || null,
-      eventoId: evento.id,
-      categoriaId: categoria.id,
-      reciboPatente: exentoPago ? null : (reciboPatente || null),
-      reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
-      reciboBebidas: exentoPago ? null : (reciboBebidas || null),
-      exentoPago,
-      exentoRazon: exentoPago ? exentoRazon : null,
+    let evento = await prisma.evento.findFirst({ where: { nombre: { contains: eventoCode === 'FFC' ? 'Feria' : (eventoCode === 'CAR' ? 'Carrera' : eventoCode) } } });
+    if (!evento) {
+      evento = await prisma.evento.create({
+        data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: issueDatesEvento, ubicacion: ubicacion }
+      });
     }
-  });
+    
+    let categoriaNombre = '';
+    switch(tipoCode) {
+      case 'CO': categoriaNombre = 'Comida'; break;
+      case 'BE': categoriaNombre = 'Bebida'; break;
+      case 'AR': categoriaNombre = 'Artesanías'; break;
+      case 'PS': categoriaNombre = 'Productos y/o Servicios'; break;
+      case 'PICA': categoriaNombre = 'Pica'; break;
+      case 'MISC': categoriaNombre = 'Misceláneos'; break;
+      default: categoriaNombre = tipoCode; break;
+    }
+    
+    let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
+    if (!categoria) {
+      categoria = await prisma.categoria.create({
+        data: { nombre: categoriaNombre }
+      });
+    }
 
-  redirect('/dashboard');
+    // Generate control number securely on the server
+    const nextSeq = await getNextSequence(eventoCode);
+    const year = new Date().getFullYear();
+    const controlNumber = `${eventoCode}-MTB-${tipoCode}-${nextSeq.toString().padStart(3, '0')}-${year}`;
+
+    const reciboPatente = formData.get('reciboPatente') as string | null;
+    const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
+    const reciboBebidas = formData.get('reciboBebidas') as string | null;
+    
+    const exentoPago = formData.get('exentoPago') === 'on';
+    const exentoRazon = formData.get('exentoRazon') as string | null;
+
+    await prisma.endoso.create({
+      data: {
+        controlNumber,
+        companyName,
+        representante,
+        telefono,
+        email,
+        descripcion,
+        fechasEvento: issueDatesEvento,
+        ubicacion,
+        tarima: tarima || null,
+        eventoId: evento.id,
+        categoriaId: categoria.id,
+        reciboPatente: exentoPago ? null : (reciboPatente || null),
+        reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
+        reciboBebidas: exentoPago ? null : (reciboBebidas || null),
+        exentoPago,
+        exentoRazon: exentoPago ? exentoRazon : null,
+      }
+    });
+    success = true;
+  } catch (error: any) {
+    console.error("Error al crear endoso:", error);
+    errorMsg = error.message || "Error desconocido";
+  }
+
+  if (success) {
+    redirect('/dashboard');
+  } else {
+    redirect(`/dashboard/endosos/nuevo?error=${encodeURIComponent(errorMsg)}`);
+  }
 }
 
 export async function updateEndoso(id: string, formData: FormData) {
-  const companyName = formData.get('companyName') as string;
-  const representante = formData.get('representante') as string;
-  const telefono = formData.get('telefono') as string;
-  const email = formData.get('email') as string;
-  const descripcion = formData.get('descripcion') as string;
-  
-  const issueDatesEvento = formData.get('issueDatesEvento') as string;
-  const ubicacion = formData.get('ubicacion') as string;
-  const tarima = formData.get('tarima') as string | null;
+  let success = false;
+  let errorMsg = '';
+  try {
+    const companyName = formData.get('companyName') as string;
+    const representante = formData.get('representante') as string;
+    const telefono = formData.get('telefono') as string;
+    const email = formData.get('email') as string;
+    const descripcion = formData.get('descripcion') as string;
+    
+    const issueDatesEvento = formData.get('issueDatesEvento') as string;
+    const ubicacion = formData.get('ubicacion') as string;
+    const tarima = formData.get('tarima') as string | null;
 
-  const reciboPatente = formData.get('reciboPatente') as string | null;
-  const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
-  const reciboBebidas = formData.get('reciboBebidas') as string | null;
-  
-  const exentoPago = formData.get('exentoPago') === 'on';
-  const exentoRazon = formData.get('exentoRazon') as string | null;
+    const reciboPatente = formData.get('reciboPatente') as string | null;
+    const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
+    const reciboBebidas = formData.get('reciboBebidas') as string | null;
+    
+    const exentoPago = formData.get('exentoPago') === 'on';
+    const exentoRazon = formData.get('exentoRazon') as string | null;
 
-  await prisma.endoso.update({
-    where: { id },
-    data: {
-      companyName,
-      representante,
-      telefono,
-      email,
-      descripcion,
-      fechasEvento: issueDatesEvento,
-      ubicacion,
-      tarima: tarima || null,
-      reciboPatente: exentoPago ? null : (reciboPatente || null),
-      reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
-      reciboBebidas: exentoPago ? null : (reciboBebidas || null),
-      exentoPago,
-      exentoRazon: exentoPago ? exentoRazon : null,
-    }
-  });
+    await prisma.endoso.update({
+      where: { id },
+      data: {
+        companyName,
+        representante,
+        telefono,
+        email,
+        descripcion,
+        fechasEvento: issueDatesEvento,
+        ubicacion,
+        tarima: tarima || null,
+        reciboPatente: exentoPago ? null : (reciboPatente || null),
+        reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
+        reciboBebidas: exentoPago ? null : (reciboBebidas || null),
+        exentoPago,
+        exentoRazon: exentoPago ? exentoRazon : null,
+      }
+    });
+    success = true;
+  } catch (error: any) {
+    console.error("Error al actualizar endoso:", error);
+    errorMsg = error.message || "Error desconocido";
+  }
 
-  redirect('/dashboard');
+  if (success) {
+    redirect('/dashboard');
+  } else {
+    redirect(`/dashboard/endosos/${id}/editar?error=${encodeURIComponent(errorMsg)}`);
+  }
 }
 
 import { revalidatePath } from 'next/cache';

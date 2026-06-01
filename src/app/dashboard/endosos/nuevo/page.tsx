@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma"
 import EndosoForm from "./EndosoForm"
 
-export default async function NuevoEndosoPage() {
+export default async function NuevoEndosoPage(props: { searchParams: Promise<{ error?: string }> }) {
+  const searchParams = await props.searchParams;
+  const error = searchParams.error;
+
   const eventos = await prisma.evento.findMany({
     where: { codigo: { not: null } }
   });
@@ -12,7 +15,7 @@ export default async function NuevoEndosoPage() {
         <h2 className="text-2xl font-bold text-gray-900">Crear Nuevo Endoso</h2>
       </div>
       
-      <EndosoForm eventos={eventos} />
+      <EndosoForm eventos={eventos} error={error} />
     </div>
   );
 }
