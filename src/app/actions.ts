@@ -68,6 +68,11 @@ export async function createEndoso(formData: FormData) {
     const exentoPago = formData.get('exentoPago') === 'on';
     const exentoRazon = formData.get('exentoRazon') as string | null;
 
+    const firmanteNombre = formData.get('firmanteNombre') as string || undefined;
+    const firmantePuesto = formData.get('firmantePuesto') as string || undefined;
+    const firmanteExtension = formData.get('firmanteExtension') as string || undefined;
+    const firmanteEmail = formData.get('firmanteEmail') as string || undefined;
+
     await prisma.endoso.create({
       data: {
         controlNumber,
@@ -86,6 +91,10 @@ export async function createEndoso(formData: FormData) {
         reciboBebidas: exentoPago ? null : (reciboBebidas || null),
         exentoPago,
         exentoRazon: exentoPago ? exentoRazon : null,
+        firmanteNombre,
+        firmantePuesto,
+        firmanteExtension,
+        firmanteEmail,
       }
     });
     success = true;
@@ -122,6 +131,11 @@ export async function updateEndoso(id: string, formData: FormData) {
     const exentoPago = formData.get('exentoPago') === 'on';
     const exentoRazon = formData.get('exentoRazon') as string | null;
 
+    const firmanteNombre = formData.get('firmanteNombre') as string || undefined;
+    const firmantePuesto = formData.get('firmantePuesto') as string || undefined;
+    const firmanteExtension = formData.get('firmanteExtension') as string || undefined;
+    const firmanteEmail = formData.get('firmanteEmail') as string || undefined;
+
     await prisma.endoso.update({
       where: { id },
       data: {
@@ -138,6 +152,10 @@ export async function updateEndoso(id: string, formData: FormData) {
         reciboBebidas: exentoPago ? null : (reciboBebidas || null),
         exentoPago,
         exentoRazon: exentoPago ? exentoRazon : null,
+        firmanteNombre,
+        firmantePuesto,
+        firmanteExtension,
+        firmanteEmail,
       }
     });
     success = true;

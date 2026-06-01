@@ -66,5 +66,12 @@ model Endoso {
   categoria       Categoria @relation(fields: [categoriaId], references: [id])
 
   status          String   @default("Emitido")
+  
+  // Firma y Contacto
+  firmanteNombre    String?   @default("Shirley Torres Reyes")
+  firmantePuesto    String?   @default("Ayudante Especial")
+  firmanteExtension String?   @default("2133")
+  firmanteEmail     String?   @default("storres@toabaja.com")
+
   createdAt       DateTime @default(now())
 }

@@ -128,16 +128,16 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
             {/* Signature */}
             <div style={{ marginTop: '50px' }}>
-              <div style={{ fontWeight: 'bold' }}>{endoso.firmante_companyName || 'Shirley Torres Reyes'}</div>
-              <div>{endoso.firmante_puesto || 'Ayudante Especial'}</div>
+              <div style={{ fontWeight: 'bold' }}>{endoso.firmanteNombre || 'Shirley Torres Reyes'}</div>
+              <div>{endoso.firmantePuesto || 'Ayudante Especial'}</div>
             </div>
 
             {/* Footer */}
             <footer style={{ position: 'absolute', bottom: '20px', left: '40px', right: '40px', borderTop: '1px solid #000', paddingTop: '10px', fontSize: '7pt', textAlign: 'center', color: '#333' }}>
               Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;&nbsp;•&nbsp;&nbsp;
               Teléfono: (787) 261-0202 &nbsp;&nbsp;•&nbsp;&nbsp;
-              Extensión: 2133 &nbsp;&nbsp;•&nbsp;&nbsp;
-              Correo Electrónico: storres@toabaja.com
+              Extensión: {endoso.firmanteExtension || '2133'} &nbsp;&nbsp;•&nbsp;&nbsp;
+              Correo Electrónico: {endoso.firmanteEmail || 'storres@toabaja.com'}
             </footer>
           </div>
         );

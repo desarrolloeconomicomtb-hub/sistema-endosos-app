@@ -28,8 +28,10 @@ export default async function PrintEndosoPage(
   });
   
   // Custom or fallback firmante
-  const firmaNombre = searchParams.companyName || 'Óscar Rodríguez Estrella';
-  const firmaPuesto = searchParams.puesto || 'Vicealcalde';
+  const firmaNombre = searchParams.companyName || endoso.firmanteNombre || 'Shirley Torres Reyes';
+  const firmaPuesto = searchParams.puesto || endoso.firmantePuesto || 'Ayudante Especial';
+  const firmaExtension = endoso.firmanteExtension || '2133';
+  const firmaEmail = endoso.firmanteEmail || 'storres@toabaja.com';
 
   return (
     <div className="bg-white min-h-screen text-black">
@@ -117,7 +119,7 @@ export default async function PrintEndosoPage(
 
         {/* Footer */}
         <div className="mt-auto text-center text-[7pt] text-gray-500 border-t-2 border-[#1b5e20] pt-2 pb-2">
-          Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;&nbsp;|&nbsp;&nbsp; Teléfono: (787) 261-0202 &nbsp;&nbsp;|&nbsp;&nbsp; Correo Electrónico: orodriguez1@toabaja.com
+          Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;&nbsp;|&nbsp;&nbsp; Teléfono: (787) 261-0202 &nbsp;&nbsp;|&nbsp;&nbsp; Extensión: {firmaExtension} &nbsp;&nbsp;|&nbsp;&nbsp; Correo Electrónico: {firmaEmail}
         </div>
 
       </div>
