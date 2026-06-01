@@ -68,7 +68,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
               <div style={{ flex: '1.5', textAlign: 'center', fontSize: '14pt', paddingTop: '15px' }}>
                 <div style={{ fontWeight: 'normal', marginBottom: '2px' }}>Gobierno de Puerto Rico</div>
                 <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>Municipio Autónomo de Toa Baja</div>
-                <div style={{ fontStyle: 'normal' }}>Oficina del <span style={{ textDecoration: 'underline' }}>Alcalde</span></div>
+                <div style={{ fontStyle: 'normal' }}>Oficina del Alcalde</div>
               </div>
               
               {/* Llanero Logo */}
@@ -91,7 +91,10 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
 
             {/* Addressee */}
             <div style={{ marginBottom: '30px', lineHeight: '1.2' }}>
-              <div style={{ fontWeight: 'bold' }}>{endoso.representante && endoso.representante !== 'Entidad' ? endoso.representante : ''} {endoso.companyName} {endoso.representante || ''}</div>
+              {endoso.representante && (
+                <div style={{ fontWeight: 'bold' }}>{endoso.representante}</div>
+              )}
+              <div style={{ fontWeight: 'bold' }}>{endoso.companyName}</div>
               <div>{endoso.address}</div>
               <div>Toa Baja, PR 00949</div>
             </div>
