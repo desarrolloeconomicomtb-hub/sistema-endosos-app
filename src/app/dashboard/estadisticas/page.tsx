@@ -46,7 +46,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
 
   const pagosPorEventoMap = new Map();
   allEndosos.forEach(e => {
-    const eventoNombre = e.evento.nombre;
+    const eventoNombre = e.evento?.nombre || 'Evento No Asignado';
     if (!pagosPorEventoMap.has(eventoNombre)) {
       pagosPorEventoMap.set(eventoNombre, { name: eventoNombre, Pagados: 0, Pendientes: 0, Exentos: 0 });
     }
