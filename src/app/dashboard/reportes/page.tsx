@@ -6,15 +6,20 @@ export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage() {
   const endosos = await prisma.endoso.findMany({
+    include: {
+      evento: true,
+      categoria: true,
+    },
     orderBy: { issueDate: 'desc' }
   });
 
   const totales = endosos.length;
   
-  // Agrupar por Tipo de Venta
-  const tipoVentaCounts: Record<string, number> = {};
+  // Agrupar por Categorías
+  const categoriaCounts: Record<string, number> = {};
   endosos.forEach(e => {
-    tipoVentaCounts[e.categoriaId] = (tipoVentaCounts[e.categoriaId] || 0) + 1;
+    const catName = e.categoria?.nombre || 'Sin Categoría';
+    categoriaCounts[catName] = (categoriaCounts[catName] || 0) + 1;
   });
 
   // Agrupar por Estado
@@ -23,18 +28,18 @@ export default async function ReportesPage() {
     statusCounts[e.status] = (statusCounts[e.status] || 0) + 1;
   });
 
-  // Agrupar por Actividad
-  const categoriaIdCounts: Record<string, number> = {};
+  // Agrupar por Evento
+  const eventoCounts: Record<string, number> = {};
   endosos.forEach(e => {
-    const act = e.categoriaId.trim().toUpperCase();
-    categoriaIdCounts[act] = (categoriaIdCounts[act] || 0) + 1;
+    const evName = e.evento?.nombre || 'Sin Evento';
+    eventoCounts[evName] = (eventoCounts[evName] || 0) + 1;
   });
 
-  // Group full endosos by activity for the detailed breakdown
-  const endososPorActividad = endosos.reduce((acc, endoso) => {
-    const act = endoso.categoriaId.trim().toUpperCase();
-    if (!acc[act]) acc[act] = [];
-    acc[act].push(endoso);
+  // Group full endosos by Evento for the detailed breakdown
+  const endososPorEvento = endosos.reduce((acc, endoso) => {
+    const evName = endoso.evento?.nombre || 'Sin Evento';
+    if (!acc[evName]) acc[evName] = [];
+    acc[evName].push(endoso);
     return acc;
   }, {} as Record<string, typeof endosos>);
 
@@ -59,7 +64,7 @@ export default async function ReportesPage() {
            {/* Resumen Global */}
            <div style={{border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px', textAlign: 'center', backgroundColor: '#fafafa'}}>
              <h3 style={{marginTop: 0, color: '#333'}}>Total Registrados</h3>
-             <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--mtb-green)'}}>{totales}</div>
+             <div style={{fontSize: '3rem', fontWeight: 'bold', color: '#2e5e2e'}}>{totales}</div>
            </div>
 
            {/* Estatus */}
@@ -75,11 +80,11 @@ export default async function ReportesPage() {
              </ul>
            </div>
 
-           {/* Tipos de Venta */}
+           {/* Categorías */}
            <div style={{border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px', backgroundColor: '#fafafa'}}>
              <h3 style={{marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem'}}>Categorías</h3>
              <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-               {Object.entries(tipoVentaCounts).sort((a,b)=>b[1]-a[1]).map(([k, v]) => (
+               {Object.entries(categoriaCounts).sort((a,b)=>b[1]-a[1]).map(([k, v]) => (
                  <li key={k} style={{display: 'flex', justifyContent: 'space-between', margin: '0.5rem 0'}}>
                    <span>{k}</span>
                    <strong style={{fontSize: '1.2rem'}}>{v}</strong>
@@ -89,23 +94,23 @@ export default async function ReportesPage() {
            </div>
         </div>
 
-        {/* Actividades Populares */}
+        {/* Desglose por Evento */}
         <div style={{marginBottom: '3rem'}}>
-           <h3 style={{borderBottom: '2px solid #000', paddingBottom: '0.5rem', color: '#111'}}>Desglose por Actividad / Evento</h3>
+           <h3 style={{borderBottom: '2px solid #000', paddingBottom: '0.5rem', color: '#111'}}>Resumen por Evento</h3>
            <table style={{width: '100%', borderCollapse: 'collapse', marginTop: '1rem'}}>
              <thead>
                <tr style={{backgroundColor: '#eee', borderBottom: '2px solid #ccc'}}>
-                 <th style={{padding: '0.75rem', textAlign: 'left', color: '#000'}}>Nombre de la Actividad</th>
-                 <th style={{padding: '0.75rem', textAlign: 'center', color: '#000'}}>Cantidad de Quioscos</th>
+                 <th style={{padding: '0.75rem', textAlign: 'left', color: '#000'}}>Nombre del Evento</th>
+                 <th style={{padding: '0.75rem', textAlign: 'center', color: '#000'}}>Cantidad de Endosos</th>
                </tr>
              </thead>
              <tbody>
-                {Object.entries(categoriaIdCounts).sort((a,b)=>b[1]-a[1]).map(([k, v], i) => (
-                  <tr key={i} style={{borderBottom: '1px solid #ddd'}}>
-                    <td style={{padding: '0.75rem', textAlign: 'left'}}>{k}</td>
-                    <td style={{padding: '0.75rem', textAlign: 'center', fontWeight: 'bold'}}>{v}</td>
-                  </tr>
-                ))}
+                 {Object.entries(eventoCounts).sort((a,b)=>b[1]-a[1]).map(([k, v], i) => (
+                   <tr key={i} style={{borderBottom: '1px solid #ddd'}}>
+                     <td style={{padding: '0.75rem', textAlign: 'left'}}>{k}</td>
+                     <td style={{padding: '0.75rem', textAlign: 'center', fontWeight: 'bold'}}>{v}</td>
+                   </tr>
+                 ))}
              </tbody>
            </table>
         </div>
@@ -114,20 +119,20 @@ export default async function ReportesPage() {
         <div style={{pageBreakBefore: 'auto'}}>
            <h3 style={{borderBottom: '2px solid #000', paddingBottom: '0.5rem', color: '#111'}}>Registro Detallado por Evento</h3>
            
-           {Object.keys(endososPorActividad).sort().map(categoriaId => {
-             const lista = endososPorActividad[categoriaId];
+           {Object.keys(endososPorEvento).sort().map(evName => {
+             const lista = endososPorEvento[evName];
              return (
-               <div key={categoriaId} style={{ marginBottom: '2rem' }}>
-                 <h4 style={{ backgroundColor: '#e2e8f0', padding: '0.5rem 1rem', borderRadius: '4px', margin: '0 0 1rem 0' }}>
-                   📍 Evento: {categoriaId} ({lista.length} solicitudes)
+               <div key={evName} style={{ marginBottom: '2rem' }}>
+                 <h4 style={{ backgroundColor: '#e2e8f0', padding: '0.5rem 1rem', borderRadius: '4px', margin: '0 0 1rem 0', fontWeight: 'bold' }}>
+                   📍 Evento: {evName} ({lista.length} solicitudes)
                  </h4>
                  <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem'}}>
                    <thead>
                      <tr style={{borderBottom: '2px solid #ccc'}}>
                        <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Núm. Control</th>
                        <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Solicitante</th>
-                       <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Tipo de Venta</th>
-                       <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Estatus de Pago</th>
+                       <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Categoría</th>
+                       <th style={{padding: '0.5rem', textAlign: 'left', color: '#000'}}>Estatus</th>
                      </tr>
                    </thead>
                    <tbody>
@@ -136,10 +141,10 @@ export default async function ReportesPage() {
                         return (
                           <tr key={e.id} style={{borderBottom: '1px solid #ddd'}}>
                             <td style={{padding: '0.5rem'}}>{e.controlNumber}</td>
-                            <td style={{padding: '0.5rem'}}>{e.representante && e.representante!=='Entidad'?e.representante:''} {e.companyName} {e.representante||''}</td>
-                            <td style={{padding: '0.5rem'}}>{e.categoriaId}</td>
+                            <td style={{padding: '0.5rem'}}>{e.companyName}</td>
+                            <td style={{padding: '0.5rem'}}>{e.categoria?.nombre || 'Sin Categoría'}</td>
                             <td style={{padding: '0.5rem', fontWeight: esPagado ? 'bold':'normal', color: esPagado ? '#155724' : '#856404'}}>
-                              {esPagado ? '✅ Sí (Aprobado/Pagado)' : '⏳ Pendiente de Pago'}
+                              {e.status}
                             </td>
                           </tr>
                         );

@@ -15,6 +15,7 @@ export default function DashboardLayout({
     { name: 'Panel Principal', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Nuevo Endoso', href: '/dashboard/endosos/nuevo', icon: Plus },
     { name: 'Estadísticas', href: '/dashboard/estadisticas', icon: BarChart3 },
+    { name: 'Reportes', href: '/dashboard/reportes', icon: FileText },
   ];
 
   return (
