@@ -68,7 +68,7 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
             />
             <datalist id="eventos-list">
               {eventos.map((ev) => (
-                <option key={ev.codigo} value={ev.codigo || ''}>{ev.codigo} ({ev.companyName})</option>
+                <option key={ev.codigo} value={ev.codigo || ''}>{ev.codigo} ({ev.nombre})</option>
               ))}
             </datalist>
           </div>
