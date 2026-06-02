@@ -191,6 +191,7 @@ export default async function ReportesPage(props: {
                     <th className="p-3 font-semibold text-black">Categoría</th>
                     <th className="p-3 font-semibold text-black">Ubicación</th>
                     <th className="p-3 font-semibold text-black">Estatus</th>
+                    <th className="p-3 font-semibold text-black">Inspección</th>
                     <th className="p-3 font-semibold text-black">Fecha Emisión</th>
                   </tr>
                 </thead>
@@ -208,6 +209,19 @@ export default async function ReportesPage(props: {
                           <span className={`font-semibold ${esPagado ? 'text-green-800' : 'text-amber-800'}`}>
                             {e.status}
                           </span>
+                        </td>
+                        <td className="p-3">
+                          {e.visitedAt ? (
+                            <span className="font-semibold text-green-700 whitespace-nowrap">
+                              ✓ {new Date(e.visitedAt).toLocaleDateString('es-PR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                              })}
+                            </span>
+                          ) : (
+                            <span className="text-red-500 font-medium">Pendiente</span>
+                          )}
                         </td>
                         <td className="p-3 text-gray-500">
                           {new Date(e.issueDate).toLocaleDateString('es-PR', {

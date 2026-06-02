@@ -69,9 +69,13 @@ export default async function PrintListPage(props: { searchParams: Promise<{ eve
                 <td className="py-3 px-2 font-mono text-[10px] text-gray-500">{endoso.controlNumber}</td>
                 <td className="py-3 px-2 font-bold text-gray-900 uppercase">{endoso.companyName}</td>
                 <td className="py-3 px-2 text-xs">{endoso.categoria?.nombre || 'Sin Categoría'}</td>
-                <td className="py-3 px-2 text-xs font-mono">{endoso.telefono}</td>
-                <td className="py-3 px-2 flex justify-center">
-                  <div className="w-6 h-6 border-2 border-black rounded-sm bg-white"></div>
+                <td className="py-3 px-2 text-xs font-mono">{endoso.telefono || '—'}</td>
+                <td className="py-3 px-2">
+                  <div className="flex justify-center items-center">
+                    <div className="w-6 h-6 border-2 border-black rounded-sm bg-white flex items-center justify-center font-bold text-green-700 text-xs">
+                      {endoso.visitedAt ? "✓" : ""}
+                    </div>
+                  </div>
                 </td>
                 <td className="py-3 px-2"></td>
               </tr>

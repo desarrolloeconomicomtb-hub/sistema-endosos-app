@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { QRCodeSVG } from "qrcode.react";
 import PrintAction from "../[id]/print/PrintAction";
+import { headers } from "next/headers";
 
 export default async function PrintMarbetesPage(props: { searchParams: Promise<{ eventoId?: string }> }) {
   const searchParams = await props.searchParams;
@@ -23,12 +24,17 @@ export default async function PrintMarbetesPage(props: { searchParams: Promise<{
     return <div className="p-10 text-center font-bold text-xl">No hay marbetes válidos para imprimir bajo este filtro.</div>;
   }
 
+  const headersList = await headers();
+  const rawHost = headersList.get("x-forwarded-host") || headersList.get("host") || "sistema-endosos-web.vercel.app";
+  const host = rawHost.split(',')[0].trim();
+  const protocol = (host.includes("localhost") || host.includes("127.0.0.1")) ? "http" : "https";
+
   return (
     <div className="print:bg-white bg-gray-200 min-h-screen py-10 flex flex-col items-center gap-10 print:py-0 print:gap-0 print:block">
       <PrintAction />
       
       {endosos.map((endoso, index) => {
-        const verificationUrl = `http://localhost:3000/verificar/${endoso.controlNumber}`; 
+        const verificationUrl = `${protocol}://${host}/verificar/${encodeURIComponent(endoso.controlNumber)}`; 
         
         return (
           <div key={endoso.id} className={`w-[8.5in] h-[11in] bg-white print:m-0 print:shadow-none shadow-2xl box-border relative flex flex-col items-center justify-between p-12 overflow-hidden border-[24px] border-[#2e5e2e] ${index !== endosos.length - 1 ? 'break-after-page' : ''}`}>
@@ -77,7 +83,7 @@ export default async function PrintMarbetesPage(props: { searchParams: Promise<{
               <div className="text-left">
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">Número de Control Oficial</p>
                 <p className="font-mono text-3xl font-black text-gray-800 tracking-wider bg-gray-100 px-3 py-1 rounded inline-block">{endoso.controlNumber}</p>
-                <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las issueDates: <span className="text-gray-800">{endoso.issueDatesEvento}</span></p>
+                <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las fechas: <span className="text-gray-800">{endoso.fechasEvento}</span></p>
               </div>
               <div className="bg-white p-3 border-4 border-[#2e5e2e] rounded-xl shadow-lg flex flex-col items-center">
                 <QRCodeSVG value={verificationUrl} size={120} level="H" />
