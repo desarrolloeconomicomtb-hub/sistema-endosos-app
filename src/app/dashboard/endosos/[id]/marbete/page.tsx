@@ -93,7 +93,7 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
           <div className="text-left">
             <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">Número de Control Oficial</p>
             <p className="font-mono text-3xl font-black text-gray-800 tracking-wider bg-gray-100 px-3 py-1 rounded inline-block">{endoso.controlNumber}</p>
-            <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las issueDates: <span className="text-gray-800">{endoso.issueDatesEvento}</span></p>
+            <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las fechas: <span className="text-gray-800">{endoso.fechasEvento}</span></p>
           </div>
           <div className="bg-white p-3 border-4 border-[#2e5e2e] rounded-xl shadow-lg flex flex-col items-center">
             <a href={verificationUrl} target="_blank" rel="noreferrer" title="Clic para probar la validación">
