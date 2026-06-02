@@ -35,9 +35,10 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
   }
 
   const headersList = await headers();
-  const host = headersList.get("host") || "localhost:3000";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const verificationUrl = `${protocol}://${host}/verificar/${endoso.controlNumber}`;
+  const rawHost = headersList.get("x-forwarded-host") || headersList.get("host") || "sistema-endosos-web.vercel.app";
+  const host = rawHost.split(',')[0].trim();
+  const protocol = (host.includes("localhost") || host.includes("127.0.0.1")) ? "http" : "https";
+  const verificationUrl = `${protocol}://${host}/verificar/${encodeURIComponent(endoso.controlNumber)}`;
   return (
     <div className="bg-gray-200 min-h-screen text-black py-10 flex items-center justify-center print:bg-white print:p-0 print:py-0">
       <PrintAction />
