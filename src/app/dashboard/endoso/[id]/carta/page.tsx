@@ -84,7 +84,7 @@ export default async function CartaEndoso({ params }: { params: Promise<{ id: st
 
         {/* Body Paragraphs */}
         <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-          Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoriaId nominada <strong>{endoso.categoriaId}</strong> a efectuarse en los predios de {endoso.ubicacion}.
+          Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoriaId nominada <strong>{endoso.categoriaId}</strong> a efectuarse en los predios de {endoso.ubicacion}{endoso.tarima ? `, específicamente en la tarima o área designada como: ${endoso.tarima}` : ''}.
         </div>
 
         <div style={{ textAlign: 'justify', marginBottom: '15px' }}>

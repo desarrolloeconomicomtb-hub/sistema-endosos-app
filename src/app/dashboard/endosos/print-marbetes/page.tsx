@@ -65,14 +65,18 @@ export default async function PrintMarbetesPage(props: { searchParams: Promise<{
                    <p className="text-5xl font-black text-gray-900 leading-tight">{endoso.companyName}</p>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-8 w-full mt-4 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                  <div className="text-right">
+                <div className="grid grid-cols-3 gap-4 w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                  <div className="text-right pr-4">
                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Evento Especial</p>
-                     <p className="text-2xl font-bold text-[#2e5e2e]">{endoso.evento?.nombre || 'Evento No Asignado'}</p>
+                     <p className="text-lg font-bold text-[#2e5e2e]">{endoso.evento?.nombre || 'Evento No Asignado'}</p>
                   </div>
-                  <div className="text-left border-l-4 border-[#2e5e2e] pl-8">
+                  <div className="text-center border-x-2 border-[#2e5e2e] px-4 flex flex-col justify-center">
+                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Tarima / Área</p>
+                     <p className="text-lg font-black text-amber-600 uppercase leading-none mt-1">{endoso.tarima || 'General'}</p>
+                  </div>
+                  <div className="text-left pl-4">
                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Categoría</p>
-                     <p className="text-2xl font-bold text-gray-800">{endoso.categoria?.nombre || 'Sin Categoría'}</p>
+                     <p className="text-lg font-bold text-gray-800">{endoso.categoria?.nombre || 'Sin Categoría'}</p>
                   </div>
                 </div>
               </div>
