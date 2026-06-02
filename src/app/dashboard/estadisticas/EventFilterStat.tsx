@@ -21,7 +21,7 @@ export default function EventFilterStat({ eventos, currentEventoId }: { eventos:
       >
         <option value="">Vista General (Todos)</option>
         {eventos.map((e) => (
-          <option key={e.id} value={e.id}>{e.companyName}</option>
+          <option key={e.id} value={e.id}>{e.nombre}</option>
         ))}
       </select>
     </div>
