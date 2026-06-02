@@ -159,12 +159,21 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
           </div>
         </div>
         
-        <div className="grid grid-cols-[14rem_1fr]">
+        <div className="grid grid-cols-[14rem_1fr] border-b border-gray-300">
           <div className="bg-[#3b733b] text-white px-4 py-2 font-bold text-sm flex items-center border-r border-gray-300">
             UBICACIÓN
           </div>
           <div>
             <input type="text" name="ubicacion" defaultValue={initialData?.ubicacion || "Balneario Punta Salinas"} className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[14rem_1fr] border-b border-gray-300">
+          <div className="bg-[#3b733b] text-white px-4 py-2 font-bold text-sm flex items-center border-r border-gray-300">
+            TARIMA ASIGNADA
+          </div>
+          <div>
+            <input type="text" name="tarima" defaultValue={initialData?.tarima || ''} placeholder="Ej. Tarima Principal, Tarima Sur (Opcional)" className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
           </div>
         </div>
 
