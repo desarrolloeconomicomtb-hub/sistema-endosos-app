@@ -110,11 +110,11 @@ export default async function PrintAllCartasPage(props: { searchParams: Promise<
 
             {/* Body Paragraphs */}
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría nominada <strong>{endoso.categoria.nombre}</strong> a efectuarse en los predios de {endoso.ubicacion}.
+              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría nominada <strong>{endoso.categoria?.nombre || 'Sin Categoría'}</strong> a efectuarse en los predios de {endoso.ubicacion}.
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-              El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere un (1) quiosco provisional para la venta de <strong>{endoso.categoria.nombre}</strong>. No obstante, el otorgamiento de este endoso está sujeto a que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor aplicable y realizar los trámites con el personal de la Oficina de Finanzas Municipales. Igualmente, si su intención es la venta de bebidas alcohólicas deberá obtener el endoso o licencia correspondiente otorgada por el Departamento de Hacienda para esos fines.
+              El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere un (1) quiosco provisional para la venta de <strong>{endoso.categoria?.nombre || 'Sin Categoría'}</strong>. No obstante, el otorgamiento de este endoso está sujeto a que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor aplicable y realizar los trámites con el personal de la Oficina de Finanzas Municipales. Igualmente, si su intención es la venta de bebidas alcohólicas deberá obtener el endoso o licencia correspondiente otorgada por el Departamento de Hacienda para esos fines.
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
@@ -122,7 +122,7 @@ export default async function PrintAllCartasPage(props: { searchParams: Promise<
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '30px' }}>
-              El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoría tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de <strong>{endoso.categoria.nombre}</strong> las convierta en un evento que sea considerado por nuestros ciudadanos un Orgullo Llanero.
+              El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoría tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de <strong>{endoso.categoria?.nombre || 'Sin Categoría'}</strong> las convierta en un evento que sea considerado por nuestros ciudadanos un Orgullo Llanero.
             </div>
 
             {/* Closing */}
