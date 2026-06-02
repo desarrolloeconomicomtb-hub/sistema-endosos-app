@@ -56,21 +56,6 @@ export default async function ReportesPage(props: {
     statusCounts[e.status] = (statusCounts[e.status] || 0) + 1;
   });
 
-  // Agrupar por Evento
-  const eventoCounts: Record<string, number> = {};
-  endosos.forEach((e) => {
-    const evName = e.evento?.nombre || 'Sin Evento';
-    eventoCounts[evName] = (eventoCounts[evName] || 0) + 1;
-  });
-
-  // Group full endosos by Evento for the detailed breakdown
-  const endososPorEvento = endosos.reduce((acc, endoso) => {
-    const evName = endoso.evento?.nombre || 'Sin Evento';
-    if (!acc[evName]) acc[evName] = [];
-    acc[evName].push(endoso);
-    return acc;
-  }, {} as Record<string, typeof endosos>);
-
   const currentDate = new Date().toLocaleDateString('es-PR', {
     weekday: 'long',
     year: 'numeric',
@@ -99,7 +84,7 @@ export default async function ReportesPage(props: {
       {/* Tarjeta de Filtros de Búsqueda - Oculta al Imprimir */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8 print:hidden">
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          🔍 Filtrar Reporte Ejecutivo
+          🔍 Filtrar Reporte en Tabla
         </h2>
         <form method="GET" className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div>
@@ -143,7 +128,7 @@ export default async function ReportesPage(props: {
               type="submit"
               className="flex-1 px-4 py-2 bg-[#2e5e2e] text-white font-medium text-sm rounded-lg hover:bg-[#1b3d1b] transition-all shadow-sm"
             >
-              Aplicar Filtros
+              Generar Tabla
             </button>
             {(selectedEventoId || selectedUbicacion) && (
               <Link
@@ -157,7 +142,7 @@ export default async function ReportesPage(props: {
         </form>
       </div>
 
-      {/* Reporte imprimible */}
+      {/* Reporte imprimible en tabla */}
       <div className="bg-white text-black p-8 md:p-12 rounded-xl border border-gray-200 shadow-sm print:border-none print:shadow-none print:p-0">
         <header className="text-center mb-10 border-b-2 border-black pb-4">
           <h1 className="font-bold text-2xl uppercase tracking-tight">
@@ -185,143 +170,73 @@ export default async function ReportesPage(props: {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {/* Resumen Global */}
-              <div className="border border-gray-200 p-6 rounded-xl text-center bg-gray-50">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Total Registrados
-                </h3>
-                <div className="text-4xl font-extrabold text-[#2e5e2e]">{totales}</div>
-              </div>
-
-              {/* Estatus */}
-              <div className="border border-gray-200 p-6 rounded-xl bg-gray-50">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-3">
-                  Estatus
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  {Object.entries(statusCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([k, v]) => (
-                      <li key={k} className="flex justify-between items-center">
-                        <span>{k}</span>
-                        <strong className="text-base font-bold">{v}</strong>
-                      </li>
-                    ))}
-                </ul>
-              </div>
-
-              {/* Categorías */}
-              <div className="border border-gray-200 p-6 rounded-xl bg-gray-50">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-3">
-                  Categorías
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  {Object.entries(categoriaCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([k, v]) => (
-                      <li key={k} className="flex justify-between items-center">
-                        <span className="truncate max-w-[150px]">{k}</span>
-                        <strong className="text-base font-bold">{v}</strong>
-                      </li>
-                    ))}
-                </ul>
+            {/* Resumen numérico básico */}
+            <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200 print:bg-white print:border-none print:p-0 print:mb-4">
+              <span className="text-sm font-semibold text-gray-700 uppercase">
+                Resumen de Filtro:
+              </span>
+              <div className="text-sm font-medium">
+                Total Registros: <strong className="text-lg font-bold text-[#2e5e2e]">{totales}</strong>
               </div>
             </div>
 
-            {/* Desglose por Evento */}
-            <div className="mb-10">
-              <h3 className="font-bold border-b-2 border-black pb-2 text-gray-900">
-                Resumen por Evento
-              </h3>
-              <table className="w-full border-collapse mt-4 text-sm">
+            {/* Tabla Maestra de Reporte */}
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-xs text-left">
                 <thead>
-                  <tr className="bg-gray-100 border-b border-gray-300">
-                    <th className="p-3 text-left font-semibold text-black">
-                      Nombre del Evento
-                    </th>
-                    <th className="p-3 text-center font-semibold text-black w-40">
-                      Cantidad de Endosos
-                    </th>
+                  <tr className="bg-gray-100 border-b-2 border-gray-300 print:bg-gray-100">
+                    <th className="p-3 font-semibold text-black">Núm. Control</th>
+                    <th className="p-3 font-semibold text-black">Proponente / Negocio</th>
+                    <th className="p-3 font-semibold text-black">Evento</th>
+                    <th className="p-3 font-semibold text-black">Categoría</th>
+                    <th className="p-3 font-semibold text-black">Ubicación</th>
+                    <th className="p-3 font-semibold text-black">Estatus</th>
+                    <th className="p-3 font-semibold text-black">Fecha Emisión</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(eventoCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([k, v], i) => (
-                      <tr key={i} className="border-b border-gray-200">
-                        <td className="p-3 text-left">{k}</td>
-                        <td className="p-3 text-center font-bold">{v}</td>
+                  {endosos.map((e) => {
+                    const esPagado = e.status === 'Pagado' || e.status === 'Aprobado';
+                    return (
+                      <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
+                        <td className="p-3 font-mono font-medium text-gray-700">{e.controlNumber}</td>
+                        <td className="p-3 font-semibold text-gray-900">{e.companyName}</td>
+                        <td className="p-3 text-gray-600">{e.evento?.nombre || 'Sin Evento'}</td>
+                        <td className="p-3 text-gray-600">{e.categoria?.nombre || 'Sin Categoría'}</td>
+                        <td className="p-3 text-gray-600">{e.ubicacion}</td>
+                        <td className="p-3">
+                          <span className={`font-semibold ${esPagado ? 'text-green-800' : 'text-amber-800'}`}>
+                            {e.status}
+                          </span>
+                        </td>
+                        <td className="p-3 text-gray-500">
+                          {new Date(e.issueDate).toLocaleDateString('es-PR', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </td>
                       </tr>
-                    ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
-            {/* Registro Detallado Agrupado por Evento */}
-            <div className="page-break-before-auto">
-              <h3 className="font-bold border-b-2 border-black pb-2 text-gray-900">
-                Registro Detallado de Endosos
-              </h3>
-
-              {Object.keys(endososPorEvento)
-                .sort()
-                .map((evName) => {
-                  const lista = endososPorEvento[evName];
-                  return (
-                    <div key={evName} className="mt-6 mb-8">
-                      <h4 className="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm mb-3">
-                        📍 Evento: {evName} ({lista.length} solicitudes)
-                      </h4>
-                      <table className="w-full border-collapse text-xs">
-                        <thead>
-                          <tr className="border-b border-gray-300">
-                            <th className="p-2 text-left font-semibold text-black w-32">
-                              Núm. Control
-                            </th>
-                            <th className="p-2 text-left font-semibold text-black">
-                              Solicitante
-                            </th>
-                            <th className="p-2 text-left font-semibold text-black">
-                              Ubicación
-                            </th>
-                            <th className="p-2 text-left font-semibold text-black w-40">
-                              Categoría
-                            </th>
-                            <th className="p-2 text-left font-semibold text-black w-28">
-                              Estatus
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {lista.map((e) => {
-                            const esPagado =
-                              e.status === 'Pagado' || e.status === 'Aprobado';
-                            return (
-                              <tr key={e.id} className="border-b border-gray-200">
-                                <td className="p-2 font-mono text-gray-600">
-                                  {e.controlNumber}
-                                </td>
-                                <td className="p-2 font-medium">{e.companyName}</td>
-                                <td className="p-2">{e.ubicacion}</td>
-                                <td className="p-2">
-                                  {e.categoria?.nombre || 'Sin Categoría'}
-                                </td>
-                                <td
-                                  className={`p-2 font-semibold ${
-                                    esPagado ? 'text-green-800' : 'text-amber-800'
-                                  }`}
-                                >
-                                  {e.status}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  );
-                })}
+            {/* Firmas al pie del reporte impreso */}
+            <div className="hidden print:block mt-16 pt-12 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-12 text-center text-xs">
+                <div>
+                  <div className="border-b border-black w-48 mx-auto mb-2"></div>
+                  <p className="font-bold text-gray-900">Preparado Por</p>
+                  <p className="text-gray-500">Oficina de Desarrollo Económico</p>
+                </div>
+                <div>
+                  <div className="border-b border-black w-48 mx-auto mb-2"></div>
+                  <p className="font-bold text-gray-900">Autorizado Por</p>
+                  <p className="text-gray-500">Municipio Autónomo de Toa Baja</p>
+                </div>
+              </div>
             </div>
           </>
         )}
