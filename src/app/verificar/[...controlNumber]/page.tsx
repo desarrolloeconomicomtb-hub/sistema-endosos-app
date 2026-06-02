@@ -3,9 +3,12 @@ import { BadgeCheck, XCircle } from "lucide-react";
 import { notFound } from "next/navigation";
 import { registrarVisita } from "@/app/actions";
 
-export default async function VerificarPage(props: { params: Promise<{ controlNumber: string }> }) {
+export default async function VerificarPage(props: { params: Promise<{ controlNumber: string | string[] }> }) {
   const params = await props.params;
-  const decodedControlNumber = decodeURIComponent(params.controlNumber);
+  const rawControlNumber = Array.isArray(params.controlNumber)
+    ? params.controlNumber.join('/')
+    : params.controlNumber;
+  const decodedControlNumber = decodeURIComponent(rawControlNumber);
 
   const endoso = await prisma.endoso.findFirst({
     where: { controlNumber: decodedControlNumber },
