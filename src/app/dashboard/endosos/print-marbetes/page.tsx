@@ -62,11 +62,11 @@ export default async function PrintMarbetesPage(props: { searchParams: Promise<{
                 <div className="grid grid-cols-2 gap-8 w-full mt-4 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                   <div className="text-right">
                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Evento Especial</p>
-                     <p className="text-2xl font-bold text-[#2e5e2e]">{endoso.evento.companyName}</p>
+                     <p className="text-2xl font-bold text-[#2e5e2e]">{endoso.evento?.nombre || 'Evento No Asignado'}</p>
                   </div>
                   <div className="text-left border-l-4 border-[#2e5e2e] pl-8">
                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Categoría</p>
-                     <p className="text-2xl font-bold text-gray-800">{endoso.categoria.companyName}</p>
+                     <p className="text-2xl font-bold text-gray-800">{endoso.categoria?.nombre || 'Sin Categoría'}</p>
                   </div>
                 </div>
               </div>

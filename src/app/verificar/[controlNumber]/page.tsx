@@ -72,11 +72,11 @@ export default async function VerificarPage(props: { params: Promise<{ controlNu
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Evento</p>
-                <p className="text-sm font-bold text-[#2e5e2e]">{endoso.evento.companyName}</p>
+                <p className="text-sm font-bold text-[#2e5e2e]">{endoso.evento?.nombre || 'Evento No Asignado'}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Categoría</p>
-                <p className="text-sm font-bold text-gray-800">{endoso.categoria.companyName}</p>
+                <p className="text-sm font-bold text-gray-800">{endoso.categoria?.nombre || 'Sin Categoría'}</p>
               </div>
             </div>
 
