@@ -6,9 +6,10 @@ import {
   createEventAction, 
   deleteEventAction, 
   createCategoryAction, 
-  deleteCategoryAction 
+  deleteCategoryAction,
+  updateEventAction
 } from "./actions";
-import { Settings, Calendar, Tag, Trash2, Plus, AlertCircle, Loader2 } from "lucide-react";
+import { Settings, Calendar, Tag, Trash2, Plus, AlertCircle, Loader2, Edit3, X } from "lucide-react";
 
 interface Evento {
   id: string;
@@ -41,6 +42,10 @@ export default function ConfigClient({
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [isEventLoading, setIsEventLoading] = useState(false);
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
+  
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
 
   const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -177,30 +182,118 @@ export default function ConfigClient({
                 <p className="text-center py-6 text-sm text-gray-400">No hay eventos registrados.</p>
               ) : (
                 initialEventos.map((evento) => (
-                  <div key={evento.id} className="flex justify-between items-center p-3 rounded-lg border border-gray-100 hover:bg-gray-50/50 transition-colors group">
-                     <div className="space-y-0.5">
-                       <div className="flex items-center gap-2">
-                         <span className="font-mono text-xs font-bold px-1.5 py-0.5 bg-gray-100 rounded text-gray-700">
-                           {evento.codigo}
-                         </span>
-                         <h4 className="font-semibold text-sm text-gray-900">{evento.nombre}</h4>
-                       </div>
-                       <p className="text-xs text-gray-500">{evento.fechas} &bull; {evento.ubicacion}</p>
-                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{evento._count.endosos} Endosos</p>
-                     </div>
-                     {evento._count.endosos === 0 ? (
-                       <button 
-                         onClick={() => handleDeleteEvent(evento.id)}
-                         className="text-gray-400 hover:text-red-600 p-1.5 rounded transition-colors" 
-                         title="Eliminar"
-                       >
-                         <Trash2 className="w-4 h-4" />
-                       </button>
-                     ) : (
-                       <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded" title="No se puede eliminar con endosos activos">
-                         Activo
-                       </span>
-                     )}
+                  <div key={evento.id} className="flex flex-col p-3 rounded-lg border border-gray-100 hover:bg-gray-50/50 transition-colors group">
+                    {editingEventId === evento.id ? (
+                      <form 
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          setEditError(null);
+                          setIsEditLoading(true);
+                          const formData = new FormData(e.currentTarget);
+                          const res = await updateEventAction(evento.id, formData);
+                          setIsEditLoading(false);
+                          if (res && res.error) {
+                            setEditError(res.error);
+                          } else {
+                            setEditingEventId(null);
+                            router.refresh();
+                          }
+                        }}
+                        className="w-full space-y-2 bg-yellow-50/40 p-2 rounded border border-yellow-200"
+                      >
+                        <div className="flex justify-between items-center border-b border-yellow-250/20 pb-1 mb-1">
+                          <h4 className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Editar Evento ({evento.codigo})</h4>
+                          <button 
+                            type="button" 
+                            onClick={() => { setEditingEventId(null); setEditError(null); }}
+                            className="text-gray-400 hover:text-gray-600 p-0.5 rounded"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        
+                        {editError && (
+                          <p className="text-[10px] text-red-700 bg-red-50 p-1.5 rounded border border-red-100">{editError}</p>
+                        )}
+
+                        <div className="grid grid-cols-3 gap-1">
+                          <input 
+                            type="text" 
+                            name="codigo" 
+                            defaultValue={evento.codigo || ''} 
+                            placeholder="Cod" 
+                            required 
+                            className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-gray-400 bg-white"
+                          />
+                          <input 
+                            type="text" 
+                            name="nombre" 
+                            defaultValue={evento.nombre} 
+                            placeholder="Nombre del Evento" 
+                            required 
+                            className="col-span-2 px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-gray-400 bg-white"
+                          />
+                        </div>
+                        <input 
+                          type="text" 
+                          name="fechas" 
+                          defaultValue={evento.fechas} 
+                          placeholder="Fechas" 
+                          required 
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-gray-400 bg-white"
+                        />
+                        <input 
+                          type="text" 
+                          name="ubicacion" 
+                          defaultValue={evento.ubicacion} 
+                          placeholder="Ubicación" 
+                          required 
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-gray-400 bg-white"
+                        />
+                        <button 
+                          type="submit" 
+                          disabled={isEditLoading}
+                          className="w-full flex items-center justify-center gap-1.5 bg-[#2e5e2e] text-white py-1 px-3 rounded text-xs font-semibold hover:bg-[#1b3d1b] transition-colors disabled:opacity-50"
+                        >
+                          {isEditLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Guardar Cambios"}
+                        </button>
+                      </form>
+                    ) : (
+                      <div className="flex justify-between items-center w-full">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold px-1.5 py-0.5 bg-gray-100 rounded text-gray-700">
+                              {evento.codigo}
+                            </span>
+                            <h4 className="font-semibold text-sm text-gray-900">{evento.nombre}</h4>
+                          </div>
+                          <p className="text-xs text-gray-500">{evento.fechas} &bull; {evento.ubicacion}</p>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{evento._count.endosos} Endosos</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button 
+                            onClick={() => { setEditingEventId(evento.id); setEditError(null); }}
+                            className="text-gray-400 hover:text-green-700 p-1.5 rounded transition-colors" 
+                            title="Editar Evento"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          {evento._count.endosos === 0 ? (
+                            <button 
+                              onClick={() => handleDeleteEvent(evento.id)}
+                              className="text-gray-400 hover:text-red-600 p-1.5 rounded transition-colors" 
+                              title="Eliminar"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded" title="No se puede eliminar con endosos activos">
+                              Activo
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               )}

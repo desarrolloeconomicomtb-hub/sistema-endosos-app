@@ -32,6 +32,31 @@ export async function deleteEventAction(id: string) {
   }
 }
 
+export async function updateEventAction(id: string, formData: FormData) {
+  const codigo = formData.get("codigo") as string;
+  const nombre = formData.get("nombre") as string;
+  const fechas = formData.get("fechas") as string;
+  const ubicacion = formData.get("ubicacion") as string;
+
+  if (!id || !codigo || !nombre || !fechas || !ubicacion) return { error: "Todos los campos son requeridos." };
+
+  try {
+    await prisma.evento.update({
+      where: { id },
+      data: { codigo, nombre, fechas, ubicacion }
+    });
+    await prisma.endoso.updateMany({
+      where: { eventoId: id },
+      data: { fechasEvento: fechas, ubicacion: ubicacion }
+    });
+    revalidatePath("/dashboard/configuracion");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Error al actualizar el evento." };
+  }
+}
+
 export async function createCategoryAction(formData: FormData) {
   const nombre = formData.get("nombre") as string;
 

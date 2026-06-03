@@ -10,6 +10,9 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
   const [controlNumber, setControlNumber] = useState(initialData?.controlNumber || 'Generando...');
   const [isExento, setIsExento] = useState(initialData?.exentoPago || false);
 
+  const [eventDates, setEventDates] = useState(() => initialData?.fechasEvento || '15-17 mayo');
+  const [eventUbicacion, setEventUbicacion] = useState(() => initialData?.ubicacion || 'Balneario Punta Salinas');
+
   useEffect(() => {
     async function fetchSequence() {
       if (initialData) return; // Si es edición, no buscar nueva secuencia
@@ -28,6 +31,16 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
     }
     fetchSequence();
   }, [evento, tipo, initialData]);
+
+  // Autofill event details if event code matches one from configuration
+  useEffect(() => {
+    if (initialData) return; // Si es edición, no sobreescribir los datos ya guardados
+    const found = eventos.find(e => e.codigo?.toUpperCase() === evento.toUpperCase());
+    if (found) {
+      setEventDates(found.fechas || '');
+      setEventUbicacion(found.ubicacion || '');
+    }
+  }, [evento, eventos, initialData]);
 
   return (
     <form action={initialData ? updateEndoso.bind(null, initialData.id) : createEndoso} className="max-w-4xl mx-auto space-y-6">
@@ -155,7 +168,13 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
             FECHAS EVENTO
           </div>
           <div>
-            <input type="text" name="issueDatesEvento" defaultValue={initialData?.issueDatesEvento || "15-17 mayo"} className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+            <input 
+              type="text" 
+              name="issueDatesEvento" 
+              value={eventDates} 
+              onChange={(e) => setEventDates(e.target.value)} 
+              className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" 
+            />
           </div>
         </div>
         
@@ -164,7 +183,13 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
             UBICACIÓN
           </div>
           <div>
-            <input type="text" name="ubicacion" defaultValue={initialData?.ubicacion || "Balneario Punta Salinas"} className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+            <input 
+              type="text" 
+              name="ubicacion" 
+              value={eventUbicacion} 
+              onChange={(e) => setEventUbicacion(e.target.value)} 
+              className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" 
+            />
           </div>
         </div>
 
