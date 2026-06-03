@@ -37,15 +37,15 @@ export default async function PrintEndosoPage(
   const rep = (endoso.representante || '').trim();
   const lowerRep = rep.toLowerCase();
   
-  let saludo = `Estimado(a) ${rep}:`;
+  let saludo = `Estimado(a) ${rep || endoso.companyName}:`;
   let addresseeLine = rep;
 
   if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
     saludo = `Estimados representantes de ${endoso.companyName}:`;
     addresseeLine = ''; // Do not print placeholder line
-  } else if (lowerRep === 'señores' || lowerRep === 'senores') {
+  } else if (lowerRep === 'señores' || lowerRep === 'senores' || lowerRep === 'entidad') {
     saludo = 'Estimados señores:';
-    addresseeLine = 'Señores';
+    addresseeLine = '';
   } else if (lowerRep.startsWith('sr. ')) {
     saludo = `Estimado señor ${rep.substring(4)}:`;
   } else if (lowerRep.startsWith('sra. ')) {
@@ -58,6 +58,12 @@ export default async function PrintEndosoPage(
     saludo = `Estimada doctora ${rep.substring(5)}:`;
   } else if (lowerRep.startsWith('ing. ')) {
     saludo = `Estimado ingeniero ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('inga. ')) {
+    saludo = `Estimada ingeniera ${rep.substring(6)}:`;
+  } else if (lowerRep.startsWith('lic. ')) {
+    saludo = `Estimado licenciado ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('lica. ')) {
+    saludo = `Estimada licenciada ${rep.substring(6)}:`;
   }
 
   return (

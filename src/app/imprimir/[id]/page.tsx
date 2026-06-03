@@ -21,6 +21,38 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
   const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const formattedIssueDate = `${issueDate.getDate()} de ${months[issueDate.getMonth()]} de ${issueDate.getFullYear()}`;
 
+  const rep = (endoso.representante || '').trim();
+  const lowerRep = rep.toLowerCase();
+  
+  let saludo = `Estimado(a) ${rep || endoso.companyName}:`;
+  let addresseeLine = rep;
+
+  if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
+    saludo = `Estimados representantes de ${endoso.companyName}:`;
+    addresseeLine = '';
+  } else if (lowerRep === 'señores' || lowerRep === 'senores' || lowerRep === 'entidad') {
+    saludo = 'Estimados señores:';
+    addresseeLine = '';
+  } else if (lowerRep.startsWith('sr. ')) {
+    saludo = `Estimado señor ${rep.substring(4)}:`;
+  } else if (lowerRep.startsWith('sra. ')) {
+    saludo = `Estimada señora ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('srta. ')) {
+    saludo = `Estimada señorita ${rep.substring(6)}:`;
+  } else if (lowerRep.startsWith('dr. ')) {
+    saludo = `Estimado doctor ${rep.substring(4)}:`;
+  } else if (lowerRep.startsWith('dra. ')) {
+    saludo = `Estimada doctora ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('ing. ')) {
+    saludo = `Estimado ingeniero ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('inga. ')) {
+    saludo = `Estimada ingeniera ${rep.substring(6)}:`;
+  } else if (lowerRep.startsWith('lic. ')) {
+    saludo = `Estimado licenciado ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('lica. ')) {
+    saludo = `Estimada licenciada ${rep.substring(6)}:`;
+  }
+
   return (
     <div className="bg-white min-h-screen text-black font-sans w-[8.5in] mx-auto p-0 print:p-0">
       {/* Container for the page with Letter margins (approx 1 inch / 96px) */}
@@ -69,7 +101,7 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
 
         {/* Addressee */}
         <div className="mb-8 text-base font-bold">
-          <p>{endoso.companyName}</p>
+          {addresseeLine && <p>{addresseeLine}</p>}
           <p>{endoso.companyName}</p>
           <p>{endoso.address}</p>
         </div>
@@ -77,7 +109,7 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
         {/* Body */}
         <div className="text-base leading-relaxed text-justify space-y-4">
           <p>
-            Estimado/a {endoso.companyName}:
+            {saludo}
           </p>
 
           <p>
