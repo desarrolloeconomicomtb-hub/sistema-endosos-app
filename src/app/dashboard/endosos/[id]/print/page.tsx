@@ -78,7 +78,6 @@ export default async function PrintEndosoPage(
         <div className="flex justify-between items-center mb-10">
           <div className="flex flex-col items-center w-40">
             <img src="/images/escudo-toa-baja.png" alt="Escudo Toa Baja" className="w-20 h-auto mb-1" />
-            <div className="h-4 w-[1px] bg-black mb-1"></div>
             <p className="text-[6pt] text-center leading-tight whitespace-nowrap">Hon. Bernardo "Betito" Márquez García</p>
             <p className="text-[6pt] text-center">Alcalde</p>
           </div>
