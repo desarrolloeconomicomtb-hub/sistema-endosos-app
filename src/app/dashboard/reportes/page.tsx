@@ -5,11 +5,12 @@ import PrintButton from '@/components/PrintButton';
 export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage(props: {
-  searchParams: Promise<{ eventoId?: string; ubicacion?: string }>;
+  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedEventoId = searchParams.eventoId;
   const selectedUbicacion = searchParams.ubicacion;
+  const selectedTarima = searchParams.tarima;
 
   // Obtener filtros para los selectores
   const eventos = await prisma.evento.findMany({
@@ -23,6 +24,13 @@ export default async function ReportesPage(props: {
     new Set(uniqueEndosoUbicaciones.map((e) => e.ubicacion).filter(Boolean))
   ).sort();
 
+  const uniqueEndosoTarimas = await prisma.endoso.findMany({
+    select: { tarima: true },
+  });
+  const tarimas = Array.from(
+    new Set(uniqueEndosoTarimas.map((e) => e.tarima).filter(Boolean))
+  ).sort();
+
   // Construir consulta filtrada
   const whereClause: any = {};
   if (selectedEventoId) {
@@ -30,6 +38,9 @@ export default async function ReportesPage(props: {
   }
   if (selectedUbicacion) {
     whereClause.ubicacion = selectedUbicacion;
+  }
+  if (selectedTarima) {
+    whereClause.tarima = selectedTarima;
   }
 
   const endosos = await prisma.endoso.findMany({
@@ -86,7 +97,7 @@ export default async function ReportesPage(props: {
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           🔍 Filtrar Reporte en Tabla
         </h2>
-        <form method="GET" className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <form method="GET" className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
               Por Evento
@@ -123,6 +134,24 @@ export default async function ReportesPage(props: {
             </select>
           </div>
 
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Por Tarima / Área
+            </label>
+            <select
+              name="tarima"
+              defaultValue={selectedTarima || ''}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+            >
+              <option value="">-- Todas las Tarimas --</option>
+              {tarimas.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="flex gap-2">
             <button
               type="submit"
@@ -130,7 +159,7 @@ export default async function ReportesPage(props: {
             >
               Generar Tabla
             </button>
-            {(selectedEventoId || selectedUbicacion) && (
+            {(selectedEventoId || selectedUbicacion || selectedTarima) && (
               <Link
                 href="/dashboard/reportes"
                 className="px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-all border border-gray-200 text-center"
@@ -159,6 +188,11 @@ export default async function ReportesPage(props: {
           {selectedUbicacion && (
             <p className="font-semibold text-gray-900">
               Lugar / Ubicación: {selectedUbicacion}
+            </p>
+          )}
+          {selectedTarima && (
+            <p className="font-semibold text-gray-900">
+              Tarima / Área: {selectedTarima}
             </p>
           )}
           <p className="text-xs text-gray-500 mt-2">Generado: {currentDate}</p>
