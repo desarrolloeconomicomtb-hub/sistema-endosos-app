@@ -1,1 +1,1 @@
-Fix syntax error and optimize margins, padding, and min-h in dashboard print endoso page to fit on a single page
+Widen printable widths (px-[0.6in]) and reduce margins/spacings/font sizes to ensure letter layout always fits on a single page
