@@ -110,7 +110,7 @@ export default async function PrintAllCartasPage(props: { searchParams: Promise<
 
             {/* Body Paragraphs */}
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
-              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría nominada <strong>{endoso.categoria?.nombre || 'Sin Categoría'}</strong> a efectuarse en los predios de {endoso.ubicacion}{endoso.tarima ? `, específicamente en la tarima o área designada como: ${endoso.tarima}` : ''}.
+              Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría nominada <strong>{endoso.categoria?.nombre || 'Sin Categoría'}</strong> a efectuarse en los predios de {endoso.ubicacion}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
             </div>
 
             <div style={{ textAlign: 'justify', marginBottom: '15px' }}>
