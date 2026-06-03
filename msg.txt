@@ -1,1 +1,1 @@
-Reduce min-h and vertical margins to ensure public printing template fits on a single page, and change footer mt-auto to print:mt-10
+Fix syntax error and optimize margins, padding, and min-h in dashboard print endoso page to fit on a single page

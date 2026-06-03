@@ -72,12 +72,12 @@ export default async function PrintEndosoPage(
       <PrintAction />
 
       {/* A4/Letter Page Container */}
-      <div className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[11in] p-[1in] box-border relative text-[11pt] font-sans leading-relaxed flex flex-col text-black">
+      <div className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[9.5in] print:min-h-0 print:py-0 px-[1in] py-[0.5in] box-border relative text-[11pt] font-sans leading-relaxed flex flex-col text-black">
         
         {/* Header / Logos */}
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-3">
           <div className="flex flex-col items-center w-40">
-            <img src="/images/escudo-toa-baja.png" alt="Escudo Toa Baja" className="w-20 h-auto mb-1" />
+            <img src="/images/escudo-toa-baja.png" alt="Escudo Toa Baja" className="w-16 h-auto mb-1" />
             <p className="text-[6pt] text-center leading-tight whitespace-nowrap">Hon. Bernardo "Betito" Márquez García</p>
             <p className="text-[6pt] text-center">Alcalde</p>
           </div>
@@ -87,36 +87,36 @@ export default async function PrintEndosoPage(
             <p className="text-[11pt] italic">Oficina del Alcalde</p>
           </div>
           <div className="w-32 flex justify-end">
-            <img src="/images/logo-toa-baja.png" alt="Logo Toa Baja" className="w-32 h-auto" />
+            <img src="/images/logo-toa-baja.png" alt="Logo Toa Baja" className="w-24 h-auto" />
           </div>
         </div>
 
         {/* Date */}
-        <div className="mb-4">
+        <div className="mb-2">
           <p>{issueDateActual}</p>
         </div>
 
         {/* Control Number */}
-        <div className="flex justify-end mb-8">
+        <div className="flex justify-end mb-2">
           <div className="border border-[#1b5e20] px-4 py-1 text-[10pt] font-bold text-[#1b5e20]">
             Núm. Control: {endoso.controlNumber.replace(/-/g, '_')}
           </div>
         </div>
 
         {/* Addressee */}
-        <div className="mb-6">
+        <div className="mb-2">
           {addresseeLine && <p className="font-bold">{addresseeLine}</p>}
           <p className="font-bold">{endoso.companyName}</p>
           <p>{endoso.ubicacion || 'Toa Baja, PR'}</p>
         </div>
 
         {/* Salutation */}
-        <div className="mb-4">
+        <div className="mb-2">
           <p>{saludo}</p>
         </div>
 
         {/* Body Paragraphs */}
-        <div className="space-y-4 text-justify flex-1 text-[10.5pt]">
+        <div className="space-y-2 text-justify flex-1 text-[10.5pt]">
           <p>
             Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría denominada {endoso.evento?.nombre || 'Evento No Asignado'}, a celebrarse los días {endoso.evento?.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento?.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
           </p>
@@ -139,8 +139,8 @@ export default async function PrintEndosoPage(
         </div>
 
         {/* Sign-off */}
-        <div className="mt-8">
-          <p className="mb-10">Cordialmente,</p>
+        <div className="mt-3">
+          <p className="mb-4">Cordialmente,</p>
           
           <div>
             <p className="font-bold">{firmaNombre}</p>
@@ -150,7 +150,7 @@ export default async function PrintEndosoPage(
         </div>
 
         {/* Footer */}
-        <div className="mt-auto text-center text-[7pt] text-gray-500 border-t-2 border-[#1b5e20] pt-2 pb-2">
+        <div className="mt-auto print:mt-10 text-center text-[7pt] text-gray-500 border-t-2 border-[#1b5e20] pt-2 pb-2">
           Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;&nbsp;|&nbsp;&nbsp; Teléfono: (787) 261-0202 &nbsp;&nbsp;|&nbsp;&nbsp; Extensión: {firmaExtension} &nbsp;&nbsp;|&nbsp;&nbsp; Correo Electrónico: {firmaEmail}
         </div>
 
