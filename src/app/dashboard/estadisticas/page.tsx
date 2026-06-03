@@ -102,6 +102,66 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     dataPagosTarima = Array.from(tarimaPagos.values());
   }
 
+  // Report by Event, Tarima and Payment status
+  const reportDataQuery = await prisma.endoso.findMany({
+    select: {
+      tarima: true,
+      reciboPatente: true,
+      reciboAmbulante: true,
+      reciboBebidas: true,
+      exentoPago: true,
+      evento: { select: { id: true, nombre: true } }
+    }
+  });
+
+  const reportMap = new Map<string, {
+    eventoId: string;
+    eventoNombre: string;
+    tarima: string;
+    pagados: number;
+    pendientes: number;
+    exentos: number;
+    total: number;
+  }>();
+
+  reportDataQuery.forEach(e => {
+    const evId = e.evento?.id || 'none';
+    const evNombre = e.evento?.nombre || 'Evento No Asignado';
+    const t = e.tarima || 'Sin Tarima';
+    const key = `${evId}-${t}`;
+
+    if (!reportMap.has(key)) {
+      reportMap.set(key, {
+        eventoId: evId,
+        eventoNombre: evNombre,
+        tarima: t,
+        pagados: 0,
+        pendientes: 0,
+        exentos: 0,
+        total: 0
+      });
+    }
+
+    const entry = reportMap.get(key)!;
+    entry.total++;
+
+    if (e.exentoPago) {
+      entry.exentos++;
+    } else {
+      const isPaid = e.reciboPatente || e.reciboAmbulante || e.reciboBebidas;
+      if (isPaid) {
+        entry.pagados++;
+      } else {
+        entry.pendientes++;
+      }
+    }
+  });
+
+  let reportList = Array.from(reportMap.values());
+  if (eventoId) {
+    reportList = reportList.filter(item => item.eventoId === eventoId);
+  }
+
   return (
     <div>
       <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -157,6 +217,84 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
           </div>
         )
       )}
+
+      {/* Detailed Payment Report Table */}
+      <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 bg-gray-50">
+          <h2 className="text-lg font-bold text-gray-900">Reporte Detallado de Estatus de Pagos por Evento y Tarima</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Resumen consolidado de endosos, pagos registrados y exenciones agrupados por tarima asignada.
+          </p>
+        </div>
+
+        {reportList.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-100/75 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4">Evento</th>
+                  <th className="px-6 py-4">Tarima</th>
+                  <th className="px-6 py-4 text-center">Pagados</th>
+                  <th className="px-6 py-4 text-center">Exentos</th>
+                  <th className="px-6 py-4 text-center">Pendientes</th>
+                  <th className="px-6 py-4 text-center font-bold">Total</th>
+                  <th className="px-6 py-4">Progreso de Recaudación</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+                {reportList.map((item, idx) => {
+                  const paidRatio = item.total > 0 ? ((item.pagados + item.exentos) / item.total) * 100 : 0;
+                  return (
+                    <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-gray-900">{item.eventoNombre}</td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
+                          {item.tarima}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700">
+                          {item.pagados}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700">
+                          {item.exentos}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-50 text-red-700">
+                          {item.pendientes}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold text-gray-900">{item.total}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-24 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div 
+                              className={`h-full rounded-full ${
+                                paidRatio === 100 ? 'bg-emerald-500' : paidRatio > 50 ? 'bg-blue-500' : 'bg-yellow-500'
+                              }`} 
+                              style={{ width: `${paidRatio}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs font-semibold text-gray-500 whitespace-nowrap">
+                            {paidRatio.toFixed(0)}% cumplido
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            No se encontraron registros de endosos para este evento.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

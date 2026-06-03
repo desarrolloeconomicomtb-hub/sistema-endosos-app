@@ -1,1 +1,1 @@
-Adjust margins and padding to lower the header, increase font size to 10.5pt, and align the footer cleanly at the bottom using mt-auto on print templates
+Add detailed payment status summary table by Event and Tarima to the statistics page
