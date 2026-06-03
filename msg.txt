@@ -1,1 +1,1 @@
-Remove vertical line separator below escudo image in print template header
+Reduce heights and spacings to ensure the public printing template fits on a single page, and fix syntax error

@@ -55,15 +55,15 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
 
   return (
     <div className="bg-white min-h-screen text-black font-sans w-[8.5in] mx-auto p-0 print:p-0">
-      {/* Container for the page with Letter margins (approx 1 inch / 96px) */}
-      <div className="p-12 pb-8 flex flex-col min-h-[11in] relative">
+      {/* Container for the page with Letter margins */}
+      <div className="px-12 py-6 flex flex-col min-h-[11in] relative text-[10.5pt] leading-normal">
         
         {/* Header section */}
-        <div className="flex justify-between items-start mb-12">
+        <div className="flex justify-between items-start mb-6">
           {/* Left logo (Escudo) */}
           <div className="w-40 text-center flex flex-col items-center">
-            <img src="/images/escudo.png" alt="Escudo Toa Baja" className="h-28 w-auto object-contain mb-2" />
-            <div className="text-[10px] leading-tight text-black font-semibold">
+            <img src="/images/escudo.png" alt="Escudo Toa Baja" className="h-24 w-auto object-contain mb-1" />
+            <div className="text-[9px] leading-tight text-black font-semibold">
               <p>Hon. Bernardo "Betito"</p>
               <p>Márquez García</p>
               <p>Alcalde</p>
@@ -71,43 +71,43 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
           </div>
 
           {/* Center text */}
-          <div className="text-center flex-1 pt-4">
-            <p className="text-sm font-medium">Gobierno de Puerto Rico</p>
-            <h1 className="text-xl font-bold text-green-800 uppercase mt-1 mb-1">
+          <div className="text-center flex-1 pt-2">
+            <p className="text-xs font-medium">Gobierno de Puerto Rico</p>
+            <h1 className="text-lg font-bold text-green-800 uppercase mt-0.5 mb-0.5">
               Municipio Autónomo de Toa Baja
             </h1>
-            <p className="text-md italic">Oficina del Alcalde</p>
+            <p className="text-sm italic">Oficina del Alcalde</p>
           </div>
 
           {/* Right logo (Toa Baja Logo) */}
           <div className="w-40 flex justify-end">
-            <img src="/images/logo.png" alt="Logo Toa Baja" className="h-16 w-auto object-contain mt-2" />
+            <img src="/images/logo.png" alt="Logo Toa Baja" className="h-14 w-auto object-contain mt-1" />
           </div>
         </div>
 
         {/* Date */}
-        <div className="mb-6">
-          <p className="text-base">{formattedIssueDate}</p>
+        <div className="mb-4">
+          <p className="text-[10.5pt]">{formattedIssueDate}</p>
         </div>
 
         {/* Control Number Box */}
-        <div className="flex justify-end mb-8">
-          <div className="border-2 border-green-800 px-4 py-1">
-            <p className="font-bold text-sm text-green-800 tracking-wide">
+        <div className="flex justify-end mb-4">
+          <div className="border border-green-800 px-3 py-0.5">
+            <p className="font-bold text-xs text-green-800 tracking-wide">
               Núm. Control: {endoso.controlNumber}
             </p>
           </div>
         </div>
 
         {/* Addressee */}
-        <div className="mb-8 text-base font-bold">
+        <div className="mb-4 text-[10.5pt] font-bold leading-tight">
           {addresseeLine && <p>{addresseeLine}</p>}
           <p>{endoso.companyName}</p>
           <p>{endoso.address}</p>
         </div>
 
         {/* Body */}
-        <div className="text-base leading-relaxed text-justify space-y-4">
+        <div className="text-[10.5pt] leading-relaxed text-justify space-y-3">
           <p>
             {saludo}
           </p>
@@ -145,19 +145,19 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
         </div>
 
         {/* Closing */}
-        <div className="mt-8 mb-16 text-base">
+        <div className="mt-4 mb-8 text-[10.5pt]">
           <p>Cordialmente,</p>
         </div>
 
         {/* Signature Area (Blank as requested) */}
-        <div className="mb-8">
+        <div className="mb-4 text-[10.5pt]">
           <p className="font-bold">Óscar Rodríguez Estrella</p>
           <p>Vicealcalde</p>
           <p>Municipio Autónomo de Toa Baja</p>
         </div>
 
         {/* Footer */}
-        <div className="mt-auto pt-4 border-t border-green-800 text-center text-xs text-gray-600 pb-4">
+        <div className="mt-auto pt-2 border-t border-green-800 text-center text-[8pt] text-gray-600 pb-2">
           <p>
             Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;|&nbsp; Teléfono: (787) 261-0202 &nbsp;|&nbsp; Correo Electrónico: orodriguez1@toabaja.com
           </p>
