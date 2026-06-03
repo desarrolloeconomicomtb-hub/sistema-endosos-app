@@ -41,6 +41,14 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
               <ClipboardList className="w-4 h-4" /> Imprimir Lista
             </Link>
             <Link 
+              href={`/dashboard/endosos/print-checklist-table${eventoId ? `?eventoId=${eventoId}` : ''}`} 
+              target="_blank" 
+              className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-lg hover:bg-purple-100 transition-colors font-medium text-sm border border-purple-200 shadow-sm"
+              title="Imprimir tabla de checklist avanzada para inspectores"
+            >
+              <ClipboardList className="w-4 h-4" /> Checklist en Tabla
+            </Link>
+            <Link 
               href={`/dashboard/endosos/print-all${eventoId ? `?eventoId=${eventoId}` : ''}`} 
               target="_blank" 
               className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200 shadow-sm"
