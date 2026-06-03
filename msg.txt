@@ -1,1 +1,1 @@
-Reduce heights and spacings to ensure the public printing template fits on a single page, and fix syntax error
+Reduce min-h and vertical margins to ensure public printing template fits on a single page, and change footer mt-auto to print:mt-10

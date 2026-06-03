@@ -56,13 +56,13 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
   return (
     <div className="bg-white min-h-screen text-black font-sans w-[8.5in] mx-auto p-0 print:p-0">
       {/* Container for the page with Letter margins */}
-      <div className="px-12 py-6 flex flex-col min-h-[11in] relative text-[10.5pt] leading-normal">
+      <div className="px-12 py-6 flex flex-col min-h-[9.5in] print:min-h-0 print:py-0 relative text-[10.5pt] leading-normal">
         
         {/* Header section */}
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex justify-between items-start mb-3">
           {/* Left logo (Escudo) */}
           <div className="w-40 text-center flex flex-col items-center">
-            <img src="/images/escudo.png" alt="Escudo Toa Baja" className="h-24 w-auto object-contain mb-1" />
+            <img src="/images/escudo.png" alt="Escudo Toa Baja" className="h-20 w-auto object-contain mb-1" />
             <div className="text-[9px] leading-tight text-black font-semibold">
               <p>Hon. Bernardo "Betito"</p>
               <p>Márquez García</p>
@@ -71,7 +71,7 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
           </div>
 
           {/* Center text */}
-          <div className="text-center flex-1 pt-2">
+          <div className="text-center flex-1 pt-1">
             <p className="text-xs font-medium">Gobierno de Puerto Rico</p>
             <h1 className="text-lg font-bold text-green-800 uppercase mt-0.5 mb-0.5">
               Municipio Autónomo de Toa Baja
@@ -81,17 +81,17 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
 
           {/* Right logo (Toa Baja Logo) */}
           <div className="w-40 flex justify-end">
-            <img src="/images/logo.png" alt="Logo Toa Baja" className="h-14 w-auto object-contain mt-1" />
+            <img src="/images/logo.png" alt="Logo Toa Baja" className="h-12 w-auto object-contain mt-1" />
           </div>
         </div>
 
         {/* Date */}
-        <div className="mb-4">
+        <div className="mb-2">
           <p className="text-[10.5pt]">{formattedIssueDate}</p>
         </div>
 
         {/* Control Number Box */}
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-2">
           <div className="border border-green-800 px-3 py-0.5">
             <p className="font-bold text-xs text-green-800 tracking-wide">
               Núm. Control: {endoso.controlNumber}
@@ -100,14 +100,14 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
         </div>
 
         {/* Addressee */}
-        <div className="mb-4 text-[10.5pt] font-bold leading-tight">
+        <div className="mb-2 text-[10.5pt] font-bold leading-tight">
           {addresseeLine && <p>{addresseeLine}</p>}
           <p>{endoso.companyName}</p>
           <p>{endoso.address}</p>
         </div>
 
         {/* Body */}
-        <div className="text-[10.5pt] leading-relaxed text-justify space-y-3">
+        <div className="text-[10.5pt] leading-relaxed text-justify space-y-2">
           <p>
             {saludo}
           </p>
@@ -145,19 +145,19 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
         </div>
 
         {/* Closing */}
-        <div className="mt-4 mb-8 text-[10.5pt]">
+        <div className="mt-3 mb-4 text-[10.5pt]">
           <p>Cordialmente,</p>
         </div>
 
         {/* Signature Area (Blank as requested) */}
-        <div className="mb-4 text-[10.5pt]">
+        <div className="mb-2 text-[10.5pt]">
           <p className="font-bold">Óscar Rodríguez Estrella</p>
           <p>Vicealcalde</p>
           <p>Municipio Autónomo de Toa Baja</p>
         </div>
 
         {/* Footer */}
-        <div className="mt-auto pt-2 border-t border-green-800 text-center text-[8pt] text-gray-600 pb-2">
+        <div className="mt-auto print:mt-10 pt-2 border-t border-green-800 text-center text-[8pt] text-gray-600 pb-2">
           <p>
             Dirección: Apartado 2359, Toa Baja, P.R. 00951 &nbsp;|&nbsp; Teléfono: (787) 261-0202 &nbsp;|&nbsp; Correo Electrónico: orodriguez1@toabaja.com
           </p>
