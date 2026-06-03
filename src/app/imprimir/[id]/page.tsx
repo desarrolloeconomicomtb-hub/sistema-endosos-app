@@ -83,7 +83,7 @@ export default async function ImprimirEndosoPage({ params }: { params: { id: str
           <p>
             Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos
             recibido su petición para participar en la categoriaId denominada {endoso.evento.companyName}, a celebrarse
-            los días {endoso.evento.issueDates}, en el {endoso.evento.ubicacion}.
+            los días {endoso.evento.issueDates}, en el {endoso.evento.ubicacion}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
           </p>
 
           <p>
