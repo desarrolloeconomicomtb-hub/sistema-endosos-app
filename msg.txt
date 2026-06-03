@@ -1,1 +1,1 @@
-Widen printable widths (px-[0.6in]) and reduce margins/spacings/font sizes to ensure letter layout always fits on a single page
+Adjust margins and padding to lower the header, increase font size to 10.5pt, and align the footer cleanly at the bottom using mt-auto on print templates
