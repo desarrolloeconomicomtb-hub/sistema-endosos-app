@@ -32,17 +32,30 @@ export default async function PrintAllCartasPage(props: { searchParams: Promise<
       </div>
 
       {endosos.map((endoso, index) => {
-        let saludo = 'Estimado/a señor(a):';
-        if (endoso.representante === 'Entidad') {
+        const rep = (endoso.representante || '').trim();
+        const lowerRep = rep.toLowerCase();
+        
+        let saludo = `Estimado(a) ${rep}:`;
+        let addresseeLine = rep;
+
+        if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
+          saludo = `Estimados representantes de ${endoso.companyName}:`;
+          addresseeLine = ''; // Do not print placeholder line
+        } else if (lowerRep === 'señores' || lowerRep === 'senores') {
           saludo = 'Estimados señores:';
-        } else if (endoso.representante === 'Sr.') {
-          saludo = `Estimado señor ${endoso.representante || endoso.companyName}:`;
-        } else if (endoso.representante === 'Sra.') {
-          saludo = `Estimada señora ${endoso.representante || endoso.companyName}:`;
-        } else if (endoso.representante === 'Srta.') {
-          saludo = `Estimada señorita ${endoso.representante || endoso.companyName}:`;
-        } else if (!endoso.representante && endoso.representante) {
-          saludo = `Estimado/a ${endoso.representante}:`;
+          addresseeLine = 'Señores';
+        } else if (lowerRep.startsWith('sr. ')) {
+          saludo = `Estimado señor ${rep.substring(4)}:`;
+        } else if (lowerRep.startsWith('sra. ')) {
+          saludo = `Estimada señora ${rep.substring(5)}:`;
+        } else if (lowerRep.startsWith('srta. ')) {
+          saludo = `Estimada señorita ${rep.substring(6)}:`;
+        } else if (lowerRep.startsWith('dr. ')) {
+          saludo = `Estimado doctor ${rep.substring(4)}:`;
+        } else if (lowerRep.startsWith('dra. ')) {
+          saludo = `Estimada doctora ${rep.substring(5)}:`;
+        } else if (lowerRep.startsWith('ing. ')) {
+          saludo = `Estimado ingeniero ${rep.substring(5)}:`;
         }
 
         return (
@@ -95,8 +108,8 @@ export default async function PrintAllCartasPage(props: { searchParams: Promise<
 
             {/* Addressee */}
             <div style={{ marginBottom: '30px', lineHeight: '1.2' }}>
-              {endoso.representante && (
-                <div style={{ fontWeight: 'bold' }}>{endoso.representante}</div>
+              {addresseeLine && (
+                <div style={{ fontWeight: 'bold' }}>{addresseeLine}</div>
               )}
               <div style={{ fontWeight: 'bold' }}>{endoso.companyName}</div>
               <div>{endoso.address || ''}</div>

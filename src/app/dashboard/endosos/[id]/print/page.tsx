@@ -33,6 +33,33 @@ export default async function PrintEndosoPage(
   const firmaExtension = endoso.firmanteExtension || '2133';
   const firmaEmail = endoso.firmanteEmail || 'storres@toabaja.com';
 
+  // Smart salutation logic
+  const rep = (endoso.representante || '').trim();
+  const lowerRep = rep.toLowerCase();
+  
+  let saludo = `Estimado(a) ${rep}:`;
+  let addresseeLine = rep;
+
+  if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
+    saludo = `Estimados representantes de ${endoso.companyName}:`;
+    addresseeLine = ''; // Do not print placeholder line
+  } else if (lowerRep === 'señores' || lowerRep === 'senores') {
+    saludo = 'Estimados señores:';
+    addresseeLine = 'Señores';
+  } else if (lowerRep.startsWith('sr. ')) {
+    saludo = `Estimado señor ${rep.substring(4)}:`;
+  } else if (lowerRep.startsWith('sra. ')) {
+    saludo = `Estimada señora ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('srta. ')) {
+    saludo = `Estimada señorita ${rep.substring(6)}:`;
+  } else if (lowerRep.startsWith('dr. ')) {
+    saludo = `Estimado doctor ${rep.substring(4)}:`;
+  } else if (lowerRep.startsWith('dra. ')) {
+    saludo = `Estimada doctora ${rep.substring(5)}:`;
+  } else if (lowerRep.startsWith('ing. ')) {
+    saludo = `Estimado ingeniero ${rep.substring(5)}:`;
+  }
+
   return (
     <div className="bg-white min-h-screen text-black">
       {/* Print Controls (hidden on print) */}
@@ -73,14 +100,14 @@ export default async function PrintEndosoPage(
 
         {/* Addressee */}
         <div className="mb-6">
-          <p className="font-bold">{endoso.representante || '[Nombre del Representante]'}</p>
-          <p>{endoso.companyName}</p>
+          {addresseeLine && <p className="font-bold">{addresseeLine}</p>}
+          <p className="font-bold">{endoso.companyName}</p>
           <p>{endoso.ubicacion || 'Toa Baja, PR'}</p>
         </div>
 
         {/* Salutation */}
         <div className="mb-4">
-          <p>Estimado/a {endoso.representante || '[Nombre del Representante]'}:</p>
+          <p>{saludo}</p>
         </div>
 
         {/* Body Paragraphs */}
