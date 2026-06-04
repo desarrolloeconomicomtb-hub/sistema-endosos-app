@@ -168,7 +168,7 @@ export default async function CartaEndoso({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Closing */}
-          <div style={{ marginTop: '40px', marginBottom: '60px', marginLeft: '80px' }}>
+          <div style={{ marginTop: '15px', marginBottom: '80px', marginLeft: '80px' }}>
             Cordialmente,
           </div>
 
