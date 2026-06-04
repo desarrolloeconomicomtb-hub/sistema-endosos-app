@@ -139,8 +139,8 @@ export default async function PrintEndosoPage(
         </div>
 
         {/* Sign-off */}
-        <div className="mt-4">
-          <p className="mb-4">Cordialmente,</p>
+        <div style={{ marginTop: '15px', marginLeft: '80px' }}>
+          <p style={{ marginBottom: '80px' }}>Cordialmente,</p>
           
           <div>
             <p className="font-bold">{firmaNombre}</p>
