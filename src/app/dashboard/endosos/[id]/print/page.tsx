@@ -72,7 +72,7 @@ export default async function PrintEndosoPage(
       <PrintAction />
 
       {/* A4/Letter Page Container */}
-      <div className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[10.2in] print:min-h-[10.2in] px-[0.6in] py-[0.5in] box-border relative text-[10.5pt] font-sans leading-relaxed flex flex-col text-black">
+      <div id="carta-documento" className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[10.2in] print:min-h-[10.2in] px-[0.6in] py-[0.5in] box-border relative text-[10.5pt] font-sans leading-relaxed flex flex-col text-black">
         
         {/* Header / Logos */}
         <div className="flex justify-between items-center mb-6">
