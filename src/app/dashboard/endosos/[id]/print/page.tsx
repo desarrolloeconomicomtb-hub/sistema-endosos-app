@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import PrintAction from "./PrintAction";
+import fs from 'fs';
+import path from 'path';
 
 export default async function PrintEndosoPage(
   props: { 
@@ -66,10 +68,34 @@ export default async function PrintEndosoPage(
     saludo = `Estimada licenciada ${rep.substring(6)}:`;
   }
 
+  // Load Base64 images for offline Word document export
+  const escudoPath = path.join(process.cwd(), 'public/images/escudo-toa-baja.png');
+  const logoPath = path.join(process.cwd(), 'public/images/logo-toa-baja.png');
+  
+  let escudoBase64 = '';
+  let logoBase64 = '';
+  try {
+    escudoBase64 = fs.readFileSync(escudoPath).toString('base64');
+    logoBase64 = fs.readFileSync(logoPath).toString('base64');
+  } catch (e) {
+    console.error('Error loading print page images for Base64 conversion:', e);
+  }
+
   return (
     <div className="bg-white min-h-screen text-black">
       {/* Print Controls (hidden on print) */}
-      <PrintAction />
+      <PrintAction 
+        endoso={endoso}
+        escudoBase64={escudoBase64}
+        logoBase64={logoBase64}
+        firmaNombre={firmaNombre}
+        firmaPuesto={firmaPuesto}
+        firmaExtension={firmaExtension}
+        firmaEmail={firmaEmail}
+        issueDateActual={issueDateActual}
+        addresseeLine={addresseeLine}
+        saludo={saludo}
+      />
 
       {/* A4/Letter Page Container */}
       <div id="carta-documento" className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[10.2in] print:min-h-[10.2in] px-[0.6in] py-[0.5in] box-border relative text-[10.5pt] font-sans leading-relaxed flex flex-col text-black">
