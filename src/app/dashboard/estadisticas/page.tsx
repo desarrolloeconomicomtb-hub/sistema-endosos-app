@@ -102,7 +102,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     dataPagosTarima = Array.from(tarimaPagos.values());
   }
 
-  // Report by Event, Tarima and Payment status
+  // Report by Event, Tarima, Category, and Payment status
   const reportDataQuery = await prisma.endoso.findMany({
     select: {
       tarima: true,
@@ -110,7 +110,8 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
       reciboAmbulante: true,
       reciboBebidas: true,
       exentoPago: true,
-      evento: { select: { id: true, nombre: true } }
+      evento: { select: { id: true, nombre: true } },
+      categoria: { select: { nombre: true } }
     }
   });
 
@@ -118,6 +119,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     eventoId: string;
     eventoNombre: string;
     tarima: string;
+    categoriaNombre: string;
     pagados: number;
     pendientes: number;
     exentos: number;
@@ -128,13 +130,15 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     const evId = e.evento?.id || 'none';
     const evNombre = e.evento?.nombre || 'Evento No Asignado';
     const t = e.tarima || 'Sin Tarima';
-    const key = `${evId}-${t}`;
+    const catNombre = e.categoria?.nombre || 'Sin Actividad';
+    const key = `${evId}-${t}-${catNombre}`;
 
     if (!reportMap.has(key)) {
       reportMap.set(key, {
         eventoId: evId,
         eventoNombre: evNombre,
         tarima: t,
+        categoriaNombre: catNombre,
         pagados: 0,
         pendientes: 0,
         exentos: 0,
@@ -221,9 +225,9 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
       {/* Detailed Payment Report Table */}
       <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 bg-gray-50">
-          <h2 className="text-lg font-bold text-gray-900">Reporte Detallado de Estatus de Pagos por Evento y Tarima</h2>
+          <h2 className="text-lg font-bold text-gray-900">Reporte Detallado de Estatus de Pagos por Evento, Tarima y Actividad</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Resumen consolidado de endosos, pagos registrados y exenciones agrupados por tarima asignada.
+            Resumen consolidado de endosos, pagos registrados y exenciones agrupados por tarima y tipo de actividad.
           </p>
         </div>
 
@@ -234,6 +238,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
                 <tr className="bg-gray-100/75 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   <th className="px-6 py-4">Evento</th>
                   <th className="px-6 py-4">Tarima</th>
+                  <th className="px-6 py-4">Actividad</th>
                   <th className="px-6 py-4 text-center">Pagados</th>
                   <th className="px-6 py-4 text-center">Exentos</th>
                   <th className="px-6 py-4 text-center">Pendientes</th>
@@ -250,6 +255,11 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
                           {item.tarima}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {item.categoriaNombre}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
