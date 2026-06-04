@@ -135,7 +135,7 @@ export default async function CartaEndoso({ params }: { params: Promise<{ id: st
         </header>
 
         {/* Date and Content Area */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 'none' }}>
           {/* Date */}
           <div style={{ marginBottom: '25px', fontSize: '10.5pt' }}>
             {formattedDate}
@@ -168,12 +168,12 @@ export default async function CartaEndoso({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Closing */}
-          <div style={{ marginBottom: '75px' }}>
+          <div style={{ marginTop: '40px', marginBottom: '60px', marginLeft: '80px' }}>
             Cordialmente,
           </div>
 
           {/* Signature */}
-          <div style={{ marginTop: '0px' }}>
+          <div style={{ marginTop: '0px', marginLeft: '80px' }}>
             <div style={{ fontWeight: 'bold' }}>{endoso.firmanteNombre || 'Shirley Torres Reyes'}</div>
             <div>{endoso.firmantePuesto || 'Ayudante Especial'}</div>
           </div>
