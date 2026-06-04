@@ -186,12 +186,12 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
               </div>
 
               {/* Closing */}
-              <div style={{ marginBottom: '35px' }}>
+              <div style={{ marginBottom: '75px' }}>
                 Cordialmente,
               </div>
 
               {/* Signature */}
-              <div style={{ marginTop: '35px' }}>
+              <div style={{ marginTop: '0px' }}>
                 <div style={{ fontWeight: 'bold' }}>{endoso.firmanteNombre || 'Shirley Torres Reyes'}</div>
                 <div>{endoso.firmantePuesto || 'Ayudante Especial'}</div>
               </div>
