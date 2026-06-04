@@ -1,1 +1,0 @@
-Add detailed payment status summary table by Event and Tarima to the statistics page

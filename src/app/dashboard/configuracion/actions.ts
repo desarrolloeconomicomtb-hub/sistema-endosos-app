@@ -82,3 +82,21 @@ export async function deleteCategoryAction(id: string) {
     return { error: "No se puede eliminar la categoría porque tiene endosos asociados." };
   }
 }
+
+export async function updateCategoryAction(id: string, formData: FormData) {
+  const nombre = formData.get("nombre") as string;
+
+  if (!id || !nombre) return { error: "El nombre es requerido." };
+
+  try {
+    await prisma.categoria.update({
+      where: { id },
+      data: { nombre }
+    });
+    revalidatePath("/dashboard/configuracion");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Error al actualizar la categoría." };
+  }
+}

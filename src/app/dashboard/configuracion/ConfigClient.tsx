@@ -7,7 +7,8 @@ import {
   deleteEventAction, 
   createCategoryAction, 
   deleteCategoryAction,
-  updateEventAction
+  updateEventAction,
+  updateCategoryAction
 } from "./actions";
 import { Settings, Calendar, Tag, Trash2, Plus, AlertCircle, Loader2, Edit3, X } from "lucide-react";
 
@@ -46,6 +47,10 @@ export default function ConfigClient({
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
   const [isEditLoading, setIsEditLoading] = useState(false);
+
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [categoryEditError, setCategoryEditError] = useState<string | null>(null);
+  const [isCategoryEditLoading, setIsCategoryEditLoading] = useState(false);
 
   const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -347,23 +352,85 @@ export default function ConfigClient({
                 <p className="text-center py-6 text-sm text-gray-400">No hay categorías registradas.</p>
               ) : (
                 initialCategorias.map((cat) => (
-                  <div key={cat.id} className="flex justify-between items-center p-3 rounded-lg border border-gray-100 hover:bg-gray-50/50 transition-colors group">
-                    <div>
-                      <h4 className="font-semibold text-sm text-gray-900">{cat.nombre}</h4>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{cat._count.endosos} Endosos</p>
-                    </div>
-                    {cat._count.endosos === 0 ? (
-                      <button 
-                        onClick={() => handleDeleteCategory(cat.id)}
-                        className="text-gray-400 hover:text-red-600 p-1.5 rounded transition-colors" 
-                        title="Eliminar"
+                  <div key={cat.id} className="flex flex-col p-3 rounded-lg border border-gray-100 hover:bg-gray-50/50 transition-colors group">
+                    {editingCategoryId === cat.id ? (
+                      <form 
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          setCategoryEditError(null);
+                          setIsCategoryEditLoading(true);
+                          const formData = new FormData(e.currentTarget);
+                          const res = await updateCategoryAction(cat.id, formData);
+                          setIsCategoryEditLoading(false);
+                          if (res && res.error) {
+                            setCategoryEditError(res.error);
+                          } else {
+                            setEditingCategoryId(null);
+                            router.refresh();
+                          }
+                        }}
+                        className="w-full space-y-2 bg-yellow-50/40 p-2 rounded border border-yellow-200"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        <div className="flex justify-between items-center border-b border-yellow-250/20 pb-1 mb-1">
+                          <h4 className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Editar Categoría</h4>
+                          <button 
+                            type="button" 
+                            onClick={() => { setEditingCategoryId(null); setCategoryEditError(null); }}
+                            className="text-gray-400 hover:text-gray-600 p-0.5 rounded"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        
+                        {categoryEditError && (
+                          <p className="text-[10px] text-red-700 bg-red-50 p-1.5 rounded border border-red-100">{categoryEditError}</p>
+                        )}
+
+                        <input 
+                          type="text" 
+                          name="nombre" 
+                          defaultValue={cat.nombre} 
+                          placeholder="Nombre de Categoría" 
+                          required 
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-gray-400 bg-white"
+                        />
+                        <button 
+                          type="submit" 
+                          disabled={isCategoryEditLoading}
+                          className="w-full flex items-center justify-center gap-1.5 bg-[#2e5e2e] text-white py-1 px-3 rounded text-xs font-semibold hover:bg-[#1b3d1b] transition-colors disabled:opacity-50"
+                        >
+                          {isCategoryEditLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Guardar Cambios"}
+                        </button>
+                      </form>
                     ) : (
-                      <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded" title="No se puede eliminar con endosos activos">
-                        Activa
-                      </span>
+                      <div className="flex justify-between items-center w-full">
+                        <div>
+                          <h4 className="font-semibold text-sm text-gray-900">{cat.nombre}</h4>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{cat._count.endosos} Endosos</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button 
+                            onClick={() => { setEditingCategoryId(cat.id); setCategoryEditError(null); }}
+                            className="text-gray-400 hover:text-green-700 p-1.5 rounded transition-colors" 
+                            title="Editar Categoría"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          {cat._count.endosos === 0 ? (
+                            <button 
+                              onClick={() => handleDeleteCategory(cat.id)}
+                              className="text-gray-400 hover:text-red-600 p-1.5 rounded transition-colors" 
+                              title="Eliminar"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded" title="No se puede eliminar con endosos activos">
+                              Activa
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 ))
