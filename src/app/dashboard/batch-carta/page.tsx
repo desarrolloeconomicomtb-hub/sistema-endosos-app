@@ -177,8 +177,8 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
               </p>
             </div>
 
-            <div style={{ marginTop: '1.5in', marginBottom: '1.0in' }}>
-              <p style={{ marginBottom: '95px' }}>Cordialmente,</p>
+            <div style={{ marginTop: '1.3in', marginBottom: '24px' }}>
+              <p style={{ marginBottom: '57px' }}>Cordialmente,</p>
               
               <div>
                 <p className="font-bold">{firmaNombre}</p>
