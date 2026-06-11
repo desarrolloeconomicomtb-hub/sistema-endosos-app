@@ -111,7 +111,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
         }
 
         return (
-          <div key={endoso.id} className="carta-page font-sans leading-relaxed text-[10.5pt]">
+          <div key={endoso.id} className="carta-page font-sans leading-relaxed text-[11.5pt]">
             
             {/* Header / Logos */}
             <div className="flex justify-between items-center mb-6">
@@ -121,9 +121,9 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
                 <p className="text-[6pt] text-center">Alcalde</p>
               </div>
               <div className="text-center flex-1">
-                <p className="text-[10.5pt]">Gobierno de Puerto Rico</p>
+                <p className="text-[11.5pt]">Gobierno de Puerto Rico</p>
                 <p className="text-[14pt] font-bold text-[#1b5e20]">Municipio Autónomo de Toa Baja</p>
-                <p className="text-[10.5pt] italic">Oficina del Alcalde</p>
+                <p className="text-[11.5pt] italic">Oficina del Alcalde</p>
               </div>
               <div className="w-32 flex justify-end">
                 <img src="/images/logo-toa-baja.png" alt="Logo Toa Baja" className="w-24 h-auto" />
@@ -143,7 +143,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             </div>
 
             {/* Addressee */}
-            <div className="mb-3 text-[10.5pt] leading-tight">
+            <div className="mb-3 text-[11.5pt] leading-tight">
               {addresseeLine && <p className="font-bold">{addresseeLine}</p>}
               <p className="font-bold">{endoso.companyName}</p>
               <p>{endoso.ubicacion || 'Toa Baja, PR'}</p>
@@ -155,7 +155,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             </div>
 
             {/* Body Paragraphs */}
-            <div className="space-y-3 text-justify text-[10.5pt] mb-8">
+            <div className="space-y-3 text-justify text-[11.5pt] mb-8">
               <p>
                 Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría denominada {endoso.evento?.nombre || 'Evento No Asignado'}, a celebrarse los días {endoso.evento?.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento?.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
               </p>
@@ -177,8 +177,8 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
               </p>
             </div>
 
-            <div style={{ marginTop: '1.3in', marginBottom: '24px' }}>
-              <p style={{ marginBottom: '57px' }}>Cordialmente,</p>
+            <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+              <p style={{ marginBottom: '85px' }}>Cordialmente,</p>
               
               <div>
                 <p className="font-bold">{firmaNombre}</p>
