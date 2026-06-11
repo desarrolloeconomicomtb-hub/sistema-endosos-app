@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 
 export async function getNextSequence(eventoCode: string) {
   const count = await prisma.endoso.count({
@@ -104,6 +105,7 @@ export async function createEndoso(formData: FormData) {
   }
 
   if (success) {
+    revalidatePath('/dashboard');
     redirect('/dashboard');
   } else {
     redirect(`/dashboard/endosos/nuevo?error=${encodeURIComponent(errorMsg)}`);
@@ -131,14 +133,41 @@ export async function updateEndoso(id: string, formData: FormData) {
     const exentoPago = formData.get('exentoPago') === 'on';
     const exentoRazon = formData.get('exentoRazon') as string | null;
 
+    const tipoCode = formData.get('tipoCode') as string;
+    let categoriaId: string | undefined = undefined;
+
+    if (tipoCode) {
+      let categoriaNombre = '';
+      switch(tipoCode) {
+        case 'CO': categoriaNombre = 'Comida'; break;
+        case 'BE': categoriaNombre = 'Bebida'; break;
+        case 'AR': categoriaNombre = 'Artesanías'; break;
+        case 'PS': categoriaNombre = 'Productos y/o Servicios'; break;
+        case 'PICA': categoriaNombre = 'Pica'; break;
+        case 'MISC': categoriaNombre = 'Misceláneos'; break;
+        default: categoriaNombre = tipoCode; break;
+      }
+      
+      let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
+      if (!categoria) {
+        categoria = await prisma.categoria.create({
+          data: { nombre: categoriaNombre }
+        });
+      }
+      categoriaId = categoria.id;
+    }
+
     const firmanteNombre = formData.get('firmanteNombre') as string || undefined;
     const firmantePuesto = formData.get('firmantePuesto') as string || undefined;
     const firmanteExtension = formData.get('firmanteExtension') as string || undefined;
     const firmanteEmail = formData.get('firmanteEmail') as string || undefined;
 
+    const controlNumber = formData.get('controlNumber') as string;
+
     await prisma.endoso.update({
       where: { id },
       data: {
+        controlNumber: controlNumber || undefined,
         companyName,
         representante,
         telefono,
@@ -147,6 +176,7 @@ export async function updateEndoso(id: string, formData: FormData) {
         fechasEvento: issueDatesEvento,
         ubicacion,
         tarima: tarima || null,
+        categoriaId: categoriaId || undefined,
         reciboPatente: exentoPago ? null : (reciboPatente || null),
         reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
         reciboBebidas: exentoPago ? null : (reciboBebidas || null),
@@ -165,13 +195,13 @@ export async function updateEndoso(id: string, formData: FormData) {
   }
 
   if (success) {
+    revalidatePath('/dashboard');
     redirect('/dashboard');
   } else {
     redirect(`/dashboard/endosos/${id}/editar?error=${encodeURIComponent(errorMsg)}`);
   }
 }
 
-import { revalidatePath } from 'next/cache';
 
 export async function registrarVisita(formData: FormData) {
   const id = formData.get('id') as string;
@@ -184,3 +214,17 @@ export async function registrarVisita(formData: FormData) {
   
   revalidatePath(`/verificar/${encodeURIComponent(controlNumber)}`);
 }
+
+export async function deleteEndoso(id: string) {
+  try {
+    await prisma.endoso.delete({
+      where: { id }
+    });
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error al eliminar el endoso:", error);
+    return { success: false, error: error.message || "Error al eliminar el endoso." };
+  }
+}
+

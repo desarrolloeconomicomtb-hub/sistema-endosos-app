@@ -115,15 +115,21 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     }
   });
 
-  const reportMap = new Map<string, {
+  const tempMap = new Map<string, {
     eventoId: string;
     eventoNombre: string;
     tarima: string;
-    categoriaNombre: string;
     pagados: number;
     pendientes: number;
     exentos: number;
     total: number;
+    actividadesMap: Map<string, {
+      nombre: string;
+      pagados: number;
+      pendientes: number;
+      exentos: number;
+      total: number;
+    }>;
   }>();
 
   reportDataQuery.forEach(e => {
@@ -131,37 +137,62 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
     const evNombre = e.evento?.nombre || 'Evento No Asignado';
     const t = e.tarima || 'Sin Tarima';
     const catNombre = e.categoria?.nombre || 'Sin Actividad';
-    const key = `${evId}-${t}-${catNombre}`;
+    const key = `${evId}-${t}`;
 
-    if (!reportMap.has(key)) {
-      reportMap.set(key, {
+    if (!tempMap.has(key)) {
+      tempMap.set(key, {
         eventoId: evId,
         eventoNombre: evNombre,
         tarima: t,
-        categoriaNombre: catNombre,
+        pagados: 0,
+        pendientes: 0,
+        exentos: 0,
+        total: 0,
+        actividadesMap: new Map()
+      });
+    }
+
+    const entry = tempMap.get(key)!;
+    entry.total++;
+
+    if (!entry.actividadesMap.has(catNombre)) {
+      entry.actividadesMap.set(catNombre, {
+        nombre: catNombre,
         pagados: 0,
         pendientes: 0,
         exentos: 0,
         total: 0
       });
     }
-
-    const entry = reportMap.get(key)!;
-    entry.total++;
+    const actEntry = entry.actividadesMap.get(catNombre)!;
+    actEntry.total++;
 
     if (e.exentoPago) {
       entry.exentos++;
+      actEntry.exentos++;
     } else {
       const isPaid = e.reciboPatente || e.reciboAmbulante || e.reciboBebidas;
       if (isPaid) {
         entry.pagados++;
+        actEntry.pagados++;
       } else {
         entry.pendientes++;
+        actEntry.pendientes++;
       }
     }
   });
 
-  let reportList = Array.from(reportMap.values());
+  let reportList = Array.from(tempMap.values()).map(item => ({
+    eventoId: item.eventoId,
+    eventoNombre: item.eventoNombre,
+    tarima: item.tarima,
+    pagados: item.pagados,
+    pendientes: item.pendientes,
+    exentos: item.exentos,
+    total: item.total,
+    actividades: Array.from(item.actividadesMap.values())
+  }));
+
   if (eventoId) {
     reportList = reportList.filter(item => item.eventoId === eventoId);
   }
@@ -238,7 +269,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
                 <tr className="bg-gray-100/75 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   <th className="px-6 py-4">Evento</th>
                   <th className="px-6 py-4">Tarima</th>
-                  <th className="px-6 py-4">Actividad</th>
+                  <th className="px-6 py-4">Desglose por Tipo de Actividad</th>
                   <th className="px-6 py-4 text-center">Pagados</th>
                   <th className="px-6 py-4 text-center">Exentos</th>
                   <th className="px-6 py-4 text-center">Pendientes</th>
@@ -250,35 +281,43 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
                 {reportList.map((item, idx) => {
                   const paidRatio = item.total > 0 ? ((item.pagados + item.exentos) / item.total) * 100 : 0;
                   return (
-                    <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-gray-900">{item.eventoNombre}</td>
-                      <td className="px-6 py-4">
+                    <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-gray-900 align-top">{item.eventoNombre}</td>
+                      <td className="px-6 py-4 align-top">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
                           {item.tarima}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                          {item.categoriaNombre}
-                        </span>
+                      <td className="px-6 py-4 align-top">
+                        <div className="space-y-2">
+                          {item.actividades.map((act, actIdx) => (
+                            <div key={actIdx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-gray-50 rounded border border-gray-100">
+                              <span className="font-semibold text-xs text-gray-700 bg-blue-50 text-blue-800 px-2 py-0.5 rounded border border-blue-100 w-fit">
+                                {act.nombre}
+                              </span>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="px-1.5 py-0.5 rounded font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                  {act.pagados} Pag
+                                </span>
+                                <span className="px-1.5 py-0.5 rounded font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                  {act.exentos} Exe
+                                </span>
+                                <span className="px-1.5 py-0.5 rounded font-medium bg-red-50 text-red-700 border border-red-100">
+                                  {act.pendientes} Pend
+                                </span>
+                                <span className="px-1.5 py-0.5 rounded font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                                  {act.total} Tot
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700">
-                          {item.pagados}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700">
-                          {item.exentos}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-50 text-red-700">
-                          {item.pendientes}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center font-bold text-gray-900">{item.total}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-center font-semibold text-emerald-700 align-top">{item.pagados}</td>
+                      <td className="px-6 py-4 text-center font-semibold text-blue-700 align-top">{item.exentos}</td>
+                      <td className="px-6 py-4 text-center font-semibold text-red-700 align-top">{item.pendientes}</td>
+                      <td className="px-6 py-4 text-center font-bold text-gray-900 align-top">{item.total}</td>
+                      <td className="px-6 py-4 align-top">
                         <div className="flex items-center gap-3">
                           <div className="w-24 bg-gray-200 rounded-full h-2 overflow-hidden">
                             <div 

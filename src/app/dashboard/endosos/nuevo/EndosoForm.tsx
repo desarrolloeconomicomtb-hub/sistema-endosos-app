@@ -15,7 +15,16 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
 
   useEffect(() => {
     async function fetchSequence() {
-      if (initialData) return; // Si es edición, no buscar nueva secuencia
+      if (initialData) {
+        // En edición, conservar la secuencia original pero reflejar cambios de evento y tipo en las siglas
+        const parts = initialData.controlNumber.split('-');
+        if (parts.length >= 5) {
+          const originalSeq = parts[3];
+          const originalYear = parts[4];
+          setControlNumber(`${evento}-MTB-${tipo}-${originalSeq}-${originalYear}`);
+        }
+        return;
+      }
       if (evento && tipo) {
         setControlNumber('Generando...');
         try {
@@ -58,12 +67,10 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
         </div>
       )}
 
-      <input type="hidden" name="controlNumber" value={controlNumber} />
-      <input type="hidden" name="eventoCode" value={evento} />
-      <input type="hidden" name="tipoCode" value={tipo} />
-
       {/* Grid container Excel-like */}
       <div className="border border-gray-300 shadow-sm bg-white">
+        <input type="hidden" name="controlNumber" value={controlNumber} />
+        <input type="hidden" name="eventoCode" value={evento} />
         
         {/* EVENTO SECTION */}
         <div className="grid grid-cols-[14rem_1fr] border-b border-gray-300">
@@ -104,6 +111,7 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
               <option value="PICA">PICA (Pica)</option>
               <option value="MISC">MISC (Misceláneos)</option>
             </select>
+            <input type="hidden" name="tipoCode" value={tipo} />
           </div>
         </div>
 

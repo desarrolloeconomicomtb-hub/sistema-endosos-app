@@ -1,9 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Printer, Edit2, Trash2, FileText, Search, Plus, BadgeCheck, ClipboardList } from "lucide-react";
+import { Printer, Edit2, FileText, Search, Plus, BadgeCheck, ClipboardList } from "lucide-react";
 import PrintButton from "./PrintButton";
 import MarbeteButton from "./MarbeteButton";
 import EventFilter from "./EventFilter";
+import DeleteEndosoButton from "./DeleteEndosoButton";
+
+export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage(props: { searchParams: Promise<{ eventoId?: string }> }) {
   const searchParams = await props.searchParams;
@@ -136,19 +139,25 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
                       {new Date(endoso.issueDate).toLocaleDateString('es-PR', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-2">
                         <MarbeteButton 
                           endosoId={endoso.id} 
                           isPaid={!!(endoso.reciboPatente || endoso.reciboAmbulante || endoso.reciboBebidas)} 
                           isExempt={endoso.exentoPago} 
                         />
                         <PrintButton endosoId={endoso.id} />
+                        <Link 
+                          href={`/dashboard/endoso/${endoso.id}/checklist`} 
+                          target="_blank"
+                          className="p-1.5 bg-gray-100 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors" 
+                          title="Ver Hoja de Requisitos / Checklist"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                        </Link>
                         <Link href={`/dashboard/endosos/${endoso.id}/editar`} className="text-gray-400 hover:text-black transition-colors" title="Editar">
                           <Edit2 className="w-5 h-5" />
                         </Link>
-                        <button className="text-gray-400 hover:text-red-600 transition-colors" title="Eliminar">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <DeleteEndosoButton id={endoso.id} />
                       </div>
                     </td>
                   </tr>
