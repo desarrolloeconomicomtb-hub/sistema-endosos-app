@@ -164,7 +164,7 @@ export default async function PrintEndosoPage(
           </p>
         </div>
 
-        <div style={{ marginTop: '12px' }}>
+        <div style={{ marginTop: '1.5in', marginBottom: '1.0in' }}>
           <p style={{ marginBottom: '95px' }}>Cordialmente,</p>
           
           <div>
