@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import PrintButton from '@/components/PrintButton';
+import ExportExcelButton from '@/components/ExportExcelButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,7 +90,10 @@ export default async function ReportesPage(props: {
         >
           &larr; Volver al Dashboard
         </Link>
-        <PrintButton />
+        <div className="flex gap-2">
+          <ExportExcelButton data={endosos} />
+          <PrintButton />
+        </div>
       </div>
 
       {/* Tarjeta de Filtros de Búsqueda - Oculta al Imprimir */}
