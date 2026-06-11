@@ -5,6 +5,7 @@ import PrintButton from "./PrintButton";
 import MarbeteButton from "./MarbeteButton";
 import EventFilter from "./EventFilter";
 import DeleteEndosoButton from "./DeleteEndosoButton";
+import BatchPrintForm from "./BatchPrintForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -92,36 +93,46 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-white border-b border-gray-200">
-              <tr>
-                <th className="px-5 py-3 font-medium text-gray-500 w-32">Control #</th>
-                <th className="px-5 py-3 font-medium text-gray-500">Proponente</th>
-                <th className="px-5 py-3 font-medium text-gray-500">Evento</th>
-                <th className="px-5 py-3 font-medium text-gray-500 w-48">Categoría</th>
-                <th className="px-5 py-3 font-medium text-gray-500 w-32">Emisión</th>
-                <th className="px-5 py-3 font-medium text-gray-500 text-right w-24">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {endosos.length === 0 ? (
+        <BatchPrintForm>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-white border-b border-gray-200">
                 <tr>
-                  <td colSpan={6} className="px-5 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center text-gray-400">
-                      <FileText className="w-8 h-8 mb-4 stroke-[1.5]" />
-                      <p className="text-sm font-medium text-gray-900">Sin datos</p>
-                      <p className="text-sm mt-1 mb-4">No hay endosos registrados aún.</p>
-                      <Link href="/dashboard/endosos/nuevo" className="text-sm text-black underline underline-offset-4 font-medium hover:text-gray-600">
-                        Crear el primero
-                      </Link>
-                    </div>
-                  </td>
+                  <th className="px-5 py-3 font-medium text-gray-500 w-10 text-center"></th>
+                  <th className="px-5 py-3 font-medium text-gray-500 w-32">Control #</th>
+                  <th className="px-5 py-3 font-medium text-gray-500">Proponente</th>
+                  <th className="px-5 py-3 font-medium text-gray-500">Evento</th>
+                  <th className="px-5 py-3 font-medium text-gray-500 w-48">Categoría</th>
+                  <th className="px-5 py-3 font-medium text-gray-500 w-32">Emisión</th>
+                  <th className="px-5 py-3 font-medium text-gray-500 text-right w-24">Acciones</th>
                 </tr>
-              ) : (
-                endosos.map((endoso) => (
-                  <tr key={endoso.id} className="hover:bg-gray-50/80 transition-colors group">
-                    <td className="px-5 py-3.5 font-mono text-xs text-gray-600">
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {endosos.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-5 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <FileText className="w-8 h-8 mb-4 stroke-[1.5]" />
+                        <p className="text-sm font-medium text-gray-900">Sin datos</p>
+                        <p className="text-sm mt-1 mb-4">No hay endosos registrados aún.</p>
+                        <Link href="/dashboard/endosos/nuevo" className="text-sm text-black underline underline-offset-4 font-medium hover:text-gray-600">
+                          Crear el primero
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  endosos.map((endoso) => (
+                    <tr key={endoso.id} className="hover:bg-gray-50/80 transition-colors group">
+                      <td className="px-5 py-3.5 w-10 text-center">
+                        <input 
+                          type="checkbox" 
+                          name="ids" 
+                          value={endoso.id}
+                          className="rounded text-[#2e5e2e] focus:ring-[#2e5e2e] cursor-pointer w-4 h-4"
+                        />
+                      </td>
+                      <td className="px-5 py-3.5 font-mono text-xs text-gray-600">
                       {endoso.controlNumber}
                     </td>
                     <td className="px-5 py-3.5 font-medium text-gray-900">
@@ -166,6 +177,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
             </tbody>
           </table>
         </div>
+      </BatchPrintForm>
       </div>
     </div>
   );
