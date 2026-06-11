@@ -163,6 +163,23 @@ export async function updateEndoso(id: string, formData: FormData) {
     const firmanteEmail = formData.get('firmanteEmail') as string || undefined;
 
     const controlNumber = formData.get('controlNumber') as string;
+    const eventoCode = formData.get('eventoCode') as string;
+    let eventoId: string | undefined = undefined;
+
+    if (eventoCode) {
+      let evento = await prisma.evento.findUnique({ where: { codigo: eventoCode } });
+      if (!evento) {
+        evento = await prisma.evento.create({
+          data: { codigo: eventoCode, nombre: `Evento ${eventoCode}`, fechas: issueDatesEvento, ubicacion: ubicacion }
+        });
+      } else {
+        await prisma.evento.update({
+          where: { id: evento.id },
+          data: { fechas: issueDatesEvento, ubicacion: ubicacion }
+        });
+      }
+      eventoId = evento.id;
+    }
 
     await prisma.endoso.update({
       where: { id },
@@ -176,6 +193,7 @@ export async function updateEndoso(id: string, formData: FormData) {
         fechasEvento: issueDatesEvento,
         ubicacion,
         tarima: tarima || null,
+        eventoId: eventoId || undefined,
         categoriaId: categoriaId || undefined,
         reciboPatente: exentoPago ? null : (reciboPatente || null),
         reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
