@@ -63,8 +63,11 @@ export async function createEndoso(formData: FormData) {
     const controlNumber = `${eventoCode}-MTB-${tipoCode}-${nextSeq.toString().padStart(3, '0')}-${year}`;
 
     const reciboPatente = formData.get('reciboPatente') as string | null;
+    const reciboPatenteUrl = formData.get('reciboPatenteUrl') as string | null;
     const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
+    const reciboAmbulanteUrl = formData.get('reciboAmbulanteUrl') as string | null;
     const reciboBebidas = formData.get('reciboBebidas') as string | null;
+    const reciboBebidasUrl = formData.get('reciboBebidasUrl') as string | null;
     
     const exentoPago = formData.get('exentoPago') === 'on';
     const exentoRazon = formData.get('exentoRazon') as string | null;
@@ -88,8 +91,11 @@ export async function createEndoso(formData: FormData) {
         eventoId: evento.id,
         categoriaId: categoria.id,
         reciboPatente: exentoPago ? null : (reciboPatente || null),
+        reciboPatenteUrl: exentoPago ? null : (reciboPatenteUrl || null),
         reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
+        reciboAmbulanteUrl: exentoPago ? null : (reciboAmbulanteUrl || null),
         reciboBebidas: exentoPago ? null : (reciboBebidas || null),
+        reciboBebidasUrl: exentoPago ? null : (reciboBebidasUrl || null),
         exentoPago,
         exentoRazon: exentoPago ? exentoRazon : null,
         firmanteNombre,
@@ -127,8 +133,11 @@ export async function updateEndoso(id: string, formData: FormData) {
     const tarima = formData.get('tarima') as string | null;
 
     const reciboPatente = formData.get('reciboPatente') as string | null;
+    const reciboPatenteUrl = formData.get('reciboPatenteUrl') as string | null;
     const reciboAmbulante = formData.get('reciboAmbulante') as string | null;
+    const reciboAmbulanteUrl = formData.get('reciboAmbulanteUrl') as string | null;
     const reciboBebidas = formData.get('reciboBebidas') as string | null;
+    const reciboBebidasUrl = formData.get('reciboBebidasUrl') as string | null;
     
     const exentoPago = formData.get('exentoPago') === 'on';
     const exentoRazon = formData.get('exentoRazon') as string | null;
@@ -196,8 +205,11 @@ export async function updateEndoso(id: string, formData: FormData) {
         eventoId: eventoId || undefined,
         categoriaId: categoriaId || undefined,
         reciboPatente: exentoPago ? null : (reciboPatente || null),
+        reciboPatenteUrl: exentoPago ? null : (reciboPatenteUrl || null),
         reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
+        reciboAmbulanteUrl: exentoPago ? null : (reciboAmbulanteUrl || null),
         reciboBebidas: exentoPago ? null : (reciboBebidas || null),
+        reciboBebidasUrl: exentoPago ? null : (reciboBebidasUrl || null),
         exentoPago,
         exentoRazon: exentoPago ? exentoRazon : null,
         firmanteNombre,

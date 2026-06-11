@@ -9,6 +9,25 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
   const [tipo, setTipo] = useState(() => initialData ? initialData.controlNumber.split('-')[2] : 'CO');
   const [controlNumber, setControlNumber] = useState(initialData?.controlNumber || 'Generando...');
   const [isExento, setIsExento] = useState(initialData?.exentoPago || false);
+  const [patenteFile, setPatenteFile] = useState(initialData?.reciboPatenteUrl || '');
+  const [ambulanteFile, setAmbulanteFile] = useState(initialData?.reciboAmbulanteUrl || '');
+  const [bebidasFile, setBebidasFile] = useState(initialData?.reciboBebidasUrl || '');
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert('El archivo es demasiado grande. El límite de subida es de 2 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setter(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const [eventDates, setEventDates] = useState(() => initialData?.fechasEvento || '15-17 mayo');
   const [eventUbicacion, setEventUbicacion] = useState(() => initialData?.ubicacion || 'Balneario Punta Salinas');
@@ -243,13 +262,21 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-gray-300 border border-[#1b3d1b]">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-gray-300 border border-[#1b3d1b]">
               <div className="bg-white grid grid-cols-1 md:grid-cols-3">
                 <div className="bg-[#2e5e2e] text-white p-3 font-bold text-sm flex items-center">
                   RECIBO PATENTE
                 </div>
-                <div className="md:col-span-2">
-                  <input type="text" name="reciboPatente" defaultValue={initialData?.reciboPatente || ''} placeholder="Opcional" className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                <div className="md:col-span-2 flex items-center gap-1 bg-[#fff599] pr-2">
+                  <input type="text" name="reciboPatente" defaultValue={initialData?.reciboPatente || ''} placeholder="Opcional" className="flex-1 min-h-[36px] bg-transparent border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                  <input type="hidden" name="reciboPatenteUrl" value={patenteFile} />
+                  <label className="cursor-pointer bg-green-700 hover:bg-green-800 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-all whitespace-nowrap">
+                    {patenteFile ? '✓ Cambiar' : '📎 Subir Archivo'}
+                    <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileChange(e, setPatenteFile)} />
+                  </label>
+                  {patenteFile && (
+                    <button type="button" onClick={() => setPatenteFile('')} className="text-red-600 hover:text-red-800 text-xs font-bold px-1" title="Quitar archivo">✕</button>
+                  )}
                 </div>
               </div>
               
@@ -257,8 +284,16 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
                 <div className="bg-[#2e5e2e] text-white p-3 font-bold text-sm flex items-center">
                   RECIBO NEGOCIO AMBULANTE
                 </div>
-                <div className="md:col-span-2">
-                  <input type="text" name="reciboAmbulante" defaultValue={initialData?.reciboAmbulante || ''} placeholder="Opcional" className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                <div className="md:col-span-2 flex items-center gap-1 bg-[#fff599] pr-2">
+                  <input type="text" name="reciboAmbulante" defaultValue={initialData?.reciboAmbulante || ''} placeholder="Opcional" className="flex-1 min-h-[36px] bg-transparent border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                  <input type="hidden" name="reciboAmbulanteUrl" value={ambulanteFile} />
+                  <label className="cursor-pointer bg-green-700 hover:bg-green-800 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-all whitespace-nowrap">
+                    {ambulanteFile ? '✓ Cambiar' : '📎 Subir Archivo'}
+                    <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileChange(e, setAmbulanteFile)} />
+                  </label>
+                  {ambulanteFile && (
+                    <button type="button" onClick={() => setAmbulanteFile('')} className="text-red-600 hover:text-red-800 text-xs font-bold px-1" title="Quitar archivo">✕</button>
+                  )}
                 </div>
               </div>
 
@@ -266,8 +301,16 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
                 <div className="bg-[#2e5e2e] text-white p-3 font-bold text-sm flex items-center md:col-span-1 border-r border-[#1b3d1b]">
                   RECIBO BEBIDAS
                 </div>
-                <div className="md:col-span-2">
-                  <input type="text" name="reciboBebidas" defaultValue={initialData?.reciboBebidas || ''} placeholder="Opcional (solo si aplica)" className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                <div className="md:col-span-2 flex items-center gap-1 bg-[#fff599] pr-2">
+                  <input type="text" name="reciboBebidas" defaultValue={initialData?.reciboBebidas || ''} placeholder="Opcional (solo si aplica)" className="flex-1 min-h-[36px] bg-transparent border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none" />
+                  <input type="hidden" name="reciboBebidasUrl" value={bebidasFile} />
+                  <label className="cursor-pointer bg-green-700 hover:bg-green-800 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-all whitespace-nowrap">
+                    {bebidasFile ? '✓ Cambiar' : '📎 Subir Archivo'}
+                    <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileChange(e, setBebidasFile)} />
+                  </label>
+                  {bebidasFile && (
+                    <button type="button" onClick={() => setBebidasFile('')} className="text-red-600 hover:text-red-800 text-xs font-bold px-1" title="Quitar archivo">✕</button>
+                  )}
                 </div>
               </div>
             </div>

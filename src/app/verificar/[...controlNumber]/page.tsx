@@ -104,6 +104,48 @@ export default async function VerificarPage(props: { params: Promise<{ controlNu
             </form>
           )}
 
+          {/* Visualizar Recibos de Pago Digitales */}
+          {(endoso.reciboPatenteUrl || endoso.reciboAmbulanteUrl || endoso.reciboBebidasUrl) && (
+            <div className="mt-6 pt-6 border-t border-gray-100 text-left">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Recibos de Pago Digitalizados</p>
+              <div className="flex flex-col gap-2">
+                {endoso.reciboPatenteUrl && (
+                  <a 
+                    href={endoso.reciboPatenteUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between p-3 bg-green-50 border border-green-100 text-[#2e5e2e] font-bold text-xs rounded-xl hover:bg-green-100 transition-all shadow-sm"
+                  >
+                    <span>📄 Recibo Patente ({endoso.reciboPatente})</span>
+                    <span className="text-[10px] text-green-700 underline font-medium">Ver Documento &rarr;</span>
+                  </a>
+                )}
+                {endoso.reciboAmbulanteUrl && (
+                  <a 
+                    href={endoso.reciboAmbulanteUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between p-3 bg-green-50 border border-green-100 text-[#2e5e2e] font-bold text-xs rounded-xl hover:bg-green-100 transition-all shadow-sm"
+                  >
+                    <span>📄 Recibo Ambulante ({endoso.reciboAmbulante})</span>
+                    <span className="text-[10px] text-green-700 underline font-medium">Ver Documento &rarr;</span>
+                  </a>
+                )}
+                {endoso.reciboBebidasUrl && (
+                  <a 
+                    href={endoso.reciboBebidasUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between p-3 bg-green-50 border border-green-100 text-[#2e5e2e] font-bold text-xs rounded-xl hover:bg-green-100 transition-all shadow-sm"
+                  >
+                    <span>📄 Recibo Bebidas ({endoso.reciboBebidas})</span>
+                    <span className="text-[10px] text-green-700 underline font-medium">Ver Documento &rarr;</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-4">
              <img src="/images/escudo-toa-baja.png" alt="Escudo" className="h-12" />
              <div className="text-left">

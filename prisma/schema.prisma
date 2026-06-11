@@ -47,8 +47,11 @@ model Endoso {
 
   // Datos de Recibos de Pago
   reciboPatente   String?
+  reciboPatenteUrl String?
   reciboAmbulante String?
+  reciboAmbulanteUrl String?
   reciboBebidas   String?
+  reciboBebidasUrl String?
   
   // Exención de Pago
   exentoPago      Boolean  @default(false)
