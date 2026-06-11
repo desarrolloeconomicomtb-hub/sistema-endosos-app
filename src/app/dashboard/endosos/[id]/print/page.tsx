@@ -142,7 +142,7 @@ export default async function PrintEndosoPage(
         </div>
 
         {/* Body Paragraphs */}
-        <div className="space-y-3 text-justify flex-1 text-[10.5pt]">
+        <div className="space-y-3 text-justify text-[10.5pt] mb-8">
           <p>
             Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría denominada {endoso.evento?.nombre || 'Evento No Asignado'}, a celebrarse los días {endoso.evento?.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento?.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
           </p>
@@ -165,8 +165,8 @@ export default async function PrintEndosoPage(
         </div>
 
         {/* Sign-off */}
-        <div style={{ marginTop: '15px' }}>
-          <p style={{ marginBottom: '50px' }}>Cordialmente,</p>
+        <div style={{ marginTop: '30px' }}>
+          <p style={{ marginBottom: '35px' }}>Cordialmente,</p>
           
           <div>
             <p className="font-bold">{firmaNombre}</p>
