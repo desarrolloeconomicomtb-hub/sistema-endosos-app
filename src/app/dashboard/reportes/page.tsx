@@ -6,12 +6,13 @@ import ExportExcelButton from '@/components/ExportExcelButton';
 export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage(props: {
-  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string }>;
+  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string; type?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedEventoId = searchParams.eventoId;
   const selectedUbicacion = searchParams.ubicacion;
   const selectedTarima = searchParams.tarima;
+  const selectedType = searchParams.type || 'ejecutivo';
 
   // Obtener filtros para los selectores
   const eventos = await prisma.evento.findMany({
@@ -96,12 +97,29 @@ export default async function ReportesPage(props: {
         </div>
       </div>
 
+      {/* Tabs de Selección de Tipo de Reporte - Ocultos al Imprimir */}
+      <div className="flex gap-2 mb-6 border-b border-gray-200 pb-3 print:hidden">
+        <Link
+          href={`/dashboard/reportes?type=ejecutivo${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}`}
+          className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'ejecutivo' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+        >
+          Informe Ejecutivo
+        </Link>
+        <Link
+          href={`/dashboard/reportes?type=distribucion${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}`}
+          className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'distribucion' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+        >
+          Distribución de Kioscos (Compacto)
+        </Link>
+      </div>
+
       {/* Tarjeta de Filtros de Búsqueda - Oculta al Imprimir */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8 print:hidden">
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           🔍 Filtrar Reporte en Tabla
         </h2>
         <form method="GET" className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <input type="hidden" name="type" value={selectedType} />
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
               Por Evento
@@ -165,7 +183,7 @@ export default async function ReportesPage(props: {
             </button>
             {(selectedEventoId || selectedUbicacion || selectedTarima) && (
               <Link
-                href="/dashboard/reportes"
+                href={`/dashboard/reportes?type=${selectedType}`}
                 className="px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-all border border-gray-200 text-center"
               >
                 Limpiar
@@ -179,7 +197,7 @@ export default async function ReportesPage(props: {
       <div className="bg-white text-black p-8 md:p-12 rounded-xl border border-gray-200 shadow-sm print:border-none print:shadow-none print:p-0">
         <header className="text-center mb-10 border-b-2 border-black pb-4">
           <h1 className="font-bold text-2xl uppercase tracking-tight">
-            Informe Ejecutivo de Endosos
+            {selectedType === 'ejecutivo' ? 'Informe Ejecutivo de Endosos' : 'Informe de Distribución de Kioscos'}
           </h1>
           <p className="italic text-lg text-gray-700">
             Municipio Autónomo de Toa Baja
@@ -220,59 +238,92 @@ export default async function ReportesPage(props: {
 
             {/* Tabla Maestra de Reporte */}
             <div className="overflow-x-auto">
-              <table id="reporte-tabla" className="w-full border-collapse text-xs text-left">
-                <thead>
-                  <tr className="bg-gray-100 border-b-2 border-gray-300 print:bg-gray-100">
-                    <th className="p-3 font-semibold text-black">Núm. Control</th>
-                    <th className="p-3 font-semibold text-black">Proponente / Negocio</th>
-                    <th className="p-3 font-semibold text-black">Evento</th>
-                    <th className="p-3 font-semibold text-black">Categoría</th>
-                    <th className="p-3 font-semibold text-black">Ubicación</th>
-                    <th className="p-3 font-semibold text-black">Estatus</th>
-                    <th className="p-3 font-semibold text-black">Inspección</th>
-                    <th className="p-3 font-semibold text-black">Fecha Emisión</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {endosos.map((e) => {
-                    const esPagado = e.status === 'Pagado' || e.status === 'Aprobado';
-                    return (
-                      <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
-                        <td className="p-3 font-mono font-medium text-gray-700">{e.controlNumber}</td>
-                        <td className="p-3 font-semibold text-gray-900">{e.companyName}</td>
-                        <td className="p-3 text-gray-600">{e.evento?.nombre || 'Sin Evento'}</td>
-                        <td className="p-3 text-gray-600">{e.categoria?.nombre || 'Sin Categoría'}</td>
-                        <td className="p-3 text-gray-600">{e.ubicacion}</td>
-                        <td className="p-3">
-                          <span className={`font-semibold ${esPagado ? 'text-green-800' : 'text-amber-800'}`}>
-                            {e.status}
-                          </span>
-                        </td>
-                        <td className="p-3">
-                          {e.visitedAt ? (
-                            <span className="font-semibold text-green-700 whitespace-nowrap">
-                              ✓ {new Date(e.visitedAt).toLocaleDateString('es-PR', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit',
-                              })}
+              {selectedType === 'ejecutivo' ? (
+                <table id="reporte-tabla" className="w-full border-collapse text-xs text-left">
+                  <thead>
+                    <tr className="bg-gray-100 border-b-2 border-gray-300 print:bg-gray-100">
+                      <th className="p-3 font-semibold text-black">Núm. Control</th>
+                      <th className="p-3 font-semibold text-black">Proponente / Negocio</th>
+                      <th className="p-3 font-semibold text-black">Evento</th>
+                      <th className="p-3 font-semibold text-black">Categoría</th>
+                      <th className="p-3 font-semibold text-black">Ubicación</th>
+                      <th className="p-3 font-semibold text-black">Tarima</th>
+                      <th className="p-3 font-semibold text-black">Estatus</th>
+                      <th className="p-3 font-semibold text-black">Inspección</th>
+                      <th className="p-3 font-semibold text-black">Fecha Emisión</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {endosos.map((e) => {
+                      const esPagado = e.status === 'Pagado' || e.status === 'Aprobado';
+                      return (
+                        <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
+                          <td className="p-3 font-mono font-medium text-gray-700">{e.controlNumber}</td>
+                          <td className="p-3 font-semibold text-gray-900">{e.companyName}</td>
+                          <td className="p-3 text-gray-600">{e.evento?.nombre || 'Sin Evento'}</td>
+                          <td className="p-3 text-gray-600">{e.categoria?.nombre || 'Sin Categoría'}</td>
+                          <td className="p-3 text-gray-600">{e.ubicacion}</td>
+                          <td className="p-3 text-gray-600">{e.tarima || '-'}</td>
+                          <td className="p-3">
+                            <span className={`font-semibold ${esPagado ? 'text-green-800' : 'text-amber-800'}`}>
+                              {e.status}
                             </span>
-                          ) : (
-                            <span className="text-red-500 font-medium">Pendiente</span>
-                          )}
-                        </td>
-                        <td className="p-3 text-gray-500">
-                          {new Date(e.issueDate).toLocaleDateString('es-PR', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </td>
+                          </td>
+                          <td className="p-3">
+                            {e.visitedAt ? (
+                              <span className="font-semibold text-green-700 whitespace-nowrap">
+                                ✓ {new Date(e.visitedAt).toLocaleDateString('es-PR', {
+                                  year: 'numeric',
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                })}
+                              </span>
+                            ) : (
+                              <span className="text-red-500 font-medium">Pendiente</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-gray-500">
+                            {new Date(e.issueDate).toLocaleDateString('es-PR', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <table id="reporte-tabla" className="w-full border-collapse text-xs text-left">
+                  <thead>
+                    <tr className="bg-gray-100 border-b-2 border-gray-300 print:bg-gray-100">
+                      <th className="p-3 font-semibold text-black">Representante</th>
+                      <th className="p-3 font-semibold text-black">Negocio</th>
+                      <th className="p-3 font-semibold text-black">Tarima</th>
+                      <th className="p-3 font-semibold text-black">Ubicación</th>
+                      <th className="p-3 font-semibold text-black">Evento</th>
+                      <th className="p-3 font-semibold text-black">Tipo de Venta</th>
+                      <th className="p-3 font-semibold text-black">Fecha del Evento</th>
+                      <th className="p-3 font-semibold text-black">Núm. Control</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {endosos.map((e) => (
+                      <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
+                        <td className="p-3 font-semibold text-gray-900">{e.representante || '-'}</td>
+                        <td className="p-3 font-semibold text-gray-900">{e.companyName}</td>
+                        <td className="p-3 text-gray-600">{e.tarima || '-'}</td>
+                        <td className="p-3 text-gray-600">{e.ubicacion}</td>
+                        <td className="p-3 text-gray-600">{e.evento?.nombre || 'Sin Evento'}</td>
+                        <td className="p-3 text-gray-600">{e.descripcion || '-'}</td>
+                        <td className="p-3 text-gray-500">{e.evento?.fechas || '-'}</td>
+                        <td className="p-3 font-mono font-medium text-gray-700">{e.controlNumber}</td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {/* Firmas al pie del reporte impreso */}

@@ -37,35 +37,58 @@ export default async function PrintEndosoPage(
 
   // Smart salutation logic
   const rep = (endoso.representante || '').trim();
+  const company = (endoso.companyName || '').trim();
   const lowerRep = rep.toLowerCase();
-  
-  let saludo = `Estimado(a) ${rep || endoso.companyName}:`;
-  let addresseeLine = rep;
+  const lowerCompany = company.toLowerCase();
 
-  if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
-    saludo = `Estimados representantes de ${endoso.companyName}:`;
-    addresseeLine = ''; // Do not print placeholder line
-  } else if (lowerRep === 'señores' || lowerRep === 'senores' || lowerRep === 'entidad') {
-    saludo = 'Estimados señores:';
+  const hasValidRep = rep !== '' && 
+    lowerRep !== 'representante' && 
+    lowerRep !== 'representantes' && 
+    lowerRep !== 'representante autorizado' &&
+    lowerRep !== 'señores' &&
+    lowerRep !== 'senores' &&
+    lowerRep !== 'entidad';
+
+  let targetName = '';
+  let addresseeLine = '';
+
+  if (hasValidRep) {
+    targetName = rep;
+    addresseeLine = rep;
+  } else {
+    targetName = company;
     addresseeLine = '';
-  } else if (lowerRep.startsWith('sr. ')) {
-    saludo = `Estimado señor ${rep.substring(4)}:`;
-  } else if (lowerRep.startsWith('sra. ')) {
-    saludo = `Estimada señora ${rep.substring(5)}:`;
-  } else if (lowerRep.startsWith('srta. ')) {
-    saludo = `Estimada señorita ${rep.substring(6)}:`;
-  } else if (lowerRep.startsWith('dr. ')) {
-    saludo = `Estimado doctor ${rep.substring(4)}:`;
-  } else if (lowerRep.startsWith('dra. ')) {
-    saludo = `Estimada doctora ${rep.substring(5)}:`;
-  } else if (lowerRep.startsWith('ing. ')) {
-    saludo = `Estimado ingeniero ${rep.substring(5)}:`;
-  } else if (lowerRep.startsWith('inga. ')) {
-    saludo = `Estimada ingeniera ${rep.substring(6)}:`;
-  } else if (lowerRep.startsWith('lic. ')) {
-    saludo = `Estimado licenciado ${rep.substring(5)}:`;
-  } else if (lowerRep.startsWith('lica. ')) {
-    saludo = `Estimada licenciada ${rep.substring(6)}:`;
+  }
+
+  const lowerTarget = targetName.toLowerCase();
+  let saludo = '';
+
+  if (lowerTarget.startsWith('sr. ')) {
+    saludo = `Estimado señor ${targetName.substring(4)}:`;
+  } else if (lowerTarget.startsWith('sra. ')) {
+    saludo = `Estimada señora ${targetName.substring(5)}:`;
+  } else if (lowerTarget.startsWith('srta. ')) {
+    saludo = `Estimada señorita ${targetName.substring(6)}:`;
+  } else if (lowerTarget.startsWith('dr. ')) {
+    saludo = `Estimado doctor ${targetName.substring(4)}:`;
+  } else if (lowerTarget.startsWith('dra. ')) {
+    saludo = `Estimada doctora ${targetName.substring(5)}:`;
+  } else if (lowerTarget.startsWith('ing. ')) {
+    saludo = `Estimado ingeniero ${targetName.substring(5)}:`;
+  } else if (lowerTarget.startsWith('inga. ')) {
+    saludo = `Estimada ingeniera ${targetName.substring(6)}:`;
+  } else if (lowerTarget.startsWith('lic. ')) {
+    saludo = `Estimado licenciado ${targetName.substring(5)}:`;
+  } else if (lowerTarget.startsWith('lica. ')) {
+    saludo = `Estimada licenciada ${targetName.substring(6)}:`;
+  } else if (lowerTarget === 'señores' || lowerTarget === 'senores' || lowerTarget === 'entidad') {
+    saludo = 'Estimados señores:';
+  } else {
+    if (hasValidRep) {
+      saludo = `Estimado(a) ${targetName}:`;
+    } else {
+      saludo = `Estimados representantes de ${targetName}:`;
+    }
   }
 
   // Load Base64 images for offline Word document export
@@ -98,7 +121,7 @@ export default async function PrintEndosoPage(
       />
 
       {/* A4/Letter Page Container */}
-      <div id="carta-documento" className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[10.2in] print:min-h-[10.2in] px-[0.6in] py-[0.5in] box-border relative text-[11.5pt] font-sans leading-relaxed flex flex-col text-black">
+      <div id="carta-documento" className="max-w-[8.5in] mx-auto bg-white print:m-0 print:shadow-none shadow-sm min-h-[11in] print:h-[11in] px-[0.6in] pt-[0.6in] pb-[0.40in] box-border relative text-[11.5pt] font-sans leading-relaxed flex flex-col text-black">
         
         {/* Header / Logos */}
         <div className="flex justify-between items-center mb-6">
@@ -160,8 +183,8 @@ export default async function PrintEndosoPage(
           </p>
         </div>
 
-        <div style={{ marginTop: '16px', marginBottom: '24px' }}>
-          <p style={{ marginBottom: '85px' }}>Cordialmente,</p>
+        <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+          <p style={{ marginBottom: '76px' }}>Cordialmente,</p>
           
           <div>
             <p className="font-bold">{firmaNombre}</p>

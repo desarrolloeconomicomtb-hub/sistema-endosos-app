@@ -42,7 +42,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             display: none !important;
           }
           .carta-page {
-            padding: 0.6in 0.6in 0.5in 0.6in !important;
+            padding: 0.6in 0.6in 0.40in 0.6in !important;
             height: 11in !important;
             box-sizing: border-box !important;
             page-break-after: always !important;
@@ -57,7 +57,7 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
             max-width: 8.5in;
             min-height: 11in;
             margin: 20px auto;
-            padding: 0.6in 0.6in 0.5in 0.6in;
+            padding: 0.6in 0.6in 0.40in 0.6in;
             box-sizing: border-box;
             background: #white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -79,35 +79,58 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
         const firmaEmail = endoso.firmanteEmail || 'storres@toabaja.com';
 
         const rep = (endoso.representante || '').trim();
+        const company = (endoso.companyName || '').trim();
         const lowerRep = rep.toLowerCase();
-        
-        let saludo = `Estimado(a) ${rep || endoso.companyName}:`;
-        let addresseeLine = rep;
+        const lowerCompany = company.toLowerCase();
 
-        if (rep === '' || lowerRep === 'representante' || lowerRep === 'representantes' || lowerRep === 'representante autorizado') {
-          saludo = `Estimados representantes de ${endoso.companyName}:`;
+        const hasValidRep = rep !== '' && 
+          lowerRep !== 'representante' && 
+          lowerRep !== 'representantes' && 
+          lowerRep !== 'representante autorizado' &&
+          lowerRep !== 'señores' &&
+          lowerRep !== 'senores' &&
+          lowerRep !== 'entidad';
+
+        let targetName = '';
+        let addresseeLine = '';
+
+        if (hasValidRep) {
+          targetName = rep;
+          addresseeLine = rep;
+        } else {
+          targetName = company;
           addresseeLine = '';
-        } else if (lowerRep === 'señores' || lowerRep === 'senores' || lowerRep === 'entidad') {
+        }
+
+        const lowerTarget = targetName.toLowerCase();
+        let saludo = '';
+
+        if (lowerTarget.startsWith('sr. ')) {
+          saludo = `Estimado señor ${targetName.substring(4)}:`;
+        } else if (lowerTarget.startsWith('sra. ')) {
+          saludo = `Estimada señora ${targetName.substring(5)}:`;
+        } else if (lowerTarget.startsWith('srta. ')) {
+          saludo = `Estimada señorita ${targetName.substring(6)}:`;
+        } else if (lowerTarget.startsWith('dr. ')) {
+          saludo = `Estimado doctor ${targetName.substring(4)}:`;
+        } else if (lowerTarget.startsWith('dra. ')) {
+          saludo = `Estimada doctora ${targetName.substring(5)}:`;
+        } else if (lowerTarget.startsWith('ing. ')) {
+          saludo = `Estimado ingeniero ${targetName.substring(5)}:`;
+        } else if (lowerTarget.startsWith('inga. ')) {
+          saludo = `Estimada ingeniera ${targetName.substring(6)}:`;
+        } else if (lowerTarget.startsWith('lic. ')) {
+          saludo = `Estimado licenciado ${targetName.substring(5)}:`;
+        } else if (lowerTarget.startsWith('lica. ')) {
+          saludo = `Estimada licenciada ${targetName.substring(6)}:`;
+        } else if (lowerTarget === 'señores' || lowerTarget === 'senores' || lowerTarget === 'entidad') {
           saludo = 'Estimados señores:';
-          addresseeLine = '';
-        } else if (lowerRep.startsWith('sr. ')) {
-          saludo = `Estimado señor ${rep.substring(4)}:`;
-        } else if (lowerRep.startsWith('sra. ')) {
-          saludo = `Estimada señora ${rep.substring(5)}:`;
-        } else if (lowerRep.startsWith('srta. ')) {
-          saludo = `Estimada señorita ${rep.substring(6)}:`;
-        } else if (lowerRep.startsWith('dr. ')) {
-          saludo = `Estimado doctor ${rep.substring(4)}:`;
-        } else if (lowerRep.startsWith('dra. ')) {
-          saludo = `Estimada doctora ${rep.substring(5)}:`;
-        } else if (lowerRep.startsWith('ing. ')) {
-          saludo = `Estimado ingeniero ${rep.substring(5)}:`;
-        } else if (lowerRep.startsWith('inga. ')) {
-          saludo = `Estimada ingeniera ${rep.substring(6)}:`;
-        } else if (lowerRep.startsWith('lic. ')) {
-          saludo = `Estimado licenciado ${rep.substring(5)}:`;
-        } else if (lowerRep.startsWith('lica. ')) {
-          saludo = `Estimada licenciada ${rep.substring(6)}:`;
+        } else {
+          if (hasValidRep) {
+            saludo = `Estimado(a) ${targetName}:`;
+          } else {
+            saludo = `Estimados representantes de ${targetName}:`;
+          }
         }
 
         return (
@@ -173,8 +196,8 @@ export default async function BatchCartaEndoso({ searchParams }: { searchParams:
               </p>
             </div>
 
-            <div style={{ marginTop: '16px', marginBottom: '24px' }}>
-              <p style={{ marginBottom: '85px' }}>Cordialmente,</p>
+            <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+              <p style={{ marginBottom: '76px' }}>Cordialmente,</p>
               
               <div>
                 <p className="font-bold">{firmaNombre}</p>
