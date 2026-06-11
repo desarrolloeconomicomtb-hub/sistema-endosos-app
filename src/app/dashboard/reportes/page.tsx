@@ -220,7 +220,7 @@ export default async function ReportesPage(props: {
 
             {/* Tabla Maestra de Reporte */}
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-xs text-left">
+              <table id="reporte-tabla" className="w-full border-collapse text-xs text-left">
                 <thead>
                   <tr className="bg-gray-100 border-b-2 border-gray-300 print:bg-gray-100">
                     <th className="p-3 font-semibold text-black">Núm. Control</th>
