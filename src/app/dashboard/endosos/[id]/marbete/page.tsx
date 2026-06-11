@@ -44,7 +44,17 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
       <PrintAction />
       
       {/* Letter size container */}
-      <div className="w-[8.5in] h-[11in] bg-white print:m-0 print:shadow-none shadow-2xl box-border relative flex flex-col items-center justify-between p-12 overflow-hidden border-[24px] border-[#2e5e2e]">
+      <div 
+        className="w-[8.5in] h-[11in] bg-white print:m-0 print:shadow-none shadow-2xl box-border relative flex flex-col items-center justify-between p-12 overflow-hidden border-[24px] border-[#2e5e2e]"
+        style={{
+          backgroundImage: `
+            url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='75' fill='%232e5e2e' font-size='6' font-family='monospace' font-weight='bold' opacity='0.04' transform='rotate(-45 75 75)'%3EDOCUMENTO ORIGINAL NO COPIAR%3C/text%3E%3C/svg%3E"),
+            url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%232e5e2e' stroke-width='0.35' stroke-opacity='0.05'%3E%3Cpath d='M0 40 Q20 20 40 40 T80 40' /%3E%3Cpath d='M0 40 Q20 60 40 40 T80 40' /%3E%3Cpath d='M40 0 Q20 20 40 40 T40 80' /%3E%3Cpath d='M40 0 Q60 20 40 40 T40 80' /%3E%3Ccircle cx='40' cy='40' r='20' /%3E%3Ccircle cx='40' cy='40' r='30' /%3E%3C/g%3E%3C/svg%3E")
+          `,
+          backgroundRepeat: 'repeat',
+          backgroundPosition: 'center'
+        }}
+      >
         
         {/* Header with Logo and Escudo */}
         <div className="w-full flex justify-between items-start mb-6">
@@ -98,7 +108,10 @@ export default async function MarbetePage(props: { params: Promise<{ id: string 
           <div className="text-left">
             <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">Número de Control Oficial</p>
             <p className="font-mono text-3xl font-black text-gray-800 tracking-wider bg-gray-100 px-3 py-1 rounded inline-block">{endoso.controlNumber}</p>
-            <p className="text-sm font-semibold text-gray-500 mt-4">Válido para las fechas: <span className="text-gray-800">{endoso.fechasEvento}</span></p>
+            <p className="text-sm font-semibold text-gray-500 mt-3">Válido para las fechas: <span className="text-gray-800">{endoso.fechasEvento}</span></p>
+            <p className="text-[10px] text-red-600 font-bold mt-2 flex items-center gap-1">
+              ⚠️ MARCA DE AGUA Y MICRO-PATRONES DE SEGURIDAD ACTIVOS. LAS COPIAS CARECEN DE VALIDEZ.
+            </p>
           </div>
           <div className="bg-white p-3 border-4 border-[#2e5e2e] rounded-xl shadow-lg flex flex-col items-center">
             <a href={verificationUrl} target="_blank" rel="noreferrer" title="Clic para probar la validación">
