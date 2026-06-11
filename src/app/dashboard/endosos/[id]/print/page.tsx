@@ -117,54 +117,50 @@ export default async function PrintEndosoPage(
           </div>
         </div>
 
-        {/* Date */}
-        <div className="mb-3">
+        {/* Date and Control Number */}
+        <div className="flex justify-between items-center" style={{ marginBottom: '32px' }}>
           <p>{issueDateActual}</p>
-        </div>
-
-        {/* Control Number */}
-        <div className="flex justify-end mb-3">
           <div className="border border-[#1b5e20] px-3 py-0.5 text-[9.5pt] font-bold text-[#1b5e20]">
             Núm. Control: {endoso.controlNumber.replace(/-/g, '_')}
           </div>
         </div>
 
         {/* Addressee */}
-        <div className="mb-3 text-[11.5pt] leading-tight">
+        <div style={{ marginBottom: '16px' }} className="text-[11.5pt] leading-tight">
           {addresseeLine && <p className="font-bold">{addresseeLine}</p>}
           <p className="font-bold">{endoso.companyName}</p>
           <p>{endoso.ubicacion || 'Toa Baja, PR'}</p>
         </div>
 
         {/* Salutation */}
-        <div className="mb-3">
+        <div style={{ marginBottom: '16px' }}>
           <p>{saludo}</p>
         </div>
 
         {/* Body Paragraphs */}
-        <div className="space-y-3 text-justify text-[11.5pt] mb-8">
-          <p>
+        <div className="text-justify text-[11.5pt]" style={{ marginBottom: '16px' }}>
+          <p className="mb-4">
             Reciba un cordial saludo de parte de todos los que laboramos en el Municipio de Toa Baja. Hemos recibido su petición para participar en la categoría denominada {endoso.evento?.nombre || 'Evento No Asignado'}, a celebrarse los días {endoso.evento?.fechas || '15, 16 y 17 de mayo de 2026'}, en {endoso.evento?.ubicacion || 'el Balneario de Punta Salinas, Toa Baja, Puerto Rico'}{endoso.tarima ? ` (área adyacente a ${endoso.tarima})` : ''}.
           </p>
 
-          <p>
+          <p className="mb-4">
             El Municipio de Toa Baja ha evaluado su petición y no tiene objeción en que opere (1) quiosco provisional para la venta de <strong>{endoso.descripcion || '[Descripción de venta]'}</strong>. No obstante, el otorgamiento de este endoso está sujeto a que se cumplan con todos los requerimientos establecidos por ley, reglamento u ordenanza en vigor aplicable, así como realizar los trámites correspondientes con el personal de la Oficina de Finanzas Municipales.
           </p>
 
-          <p>
+          <p className="mb-4">
             Igualmente, si su intención es la venta de bebidas alcohólicas, deberá obtener el endoso o licencia correspondiente otorgada por el Departamento de Hacienda para esos fines.
           </p>
 
-          <p>
+          <p className="mb-4">
             Este endoso representa un visto bueno del Municipio en la obtención de cualquier permiso, licencia y/o trámite gubernamental requerido para que el proponente lleve a cabo su propósito.
           </p>
 
-          <p>
+          <p className="mb-0">
             El Municipio interesa mantener el más alto grado de coordinación y logística para asegurar que esta categoría tenga el éxito que todos esperamos. Confiamos en que la aportación que usted pueda brindar para el desarrollo de la {endoso.evento?.nombre || 'Evento Especial'} la convierta en un evento que sea considerado por nuestros ciudadanos un verdadero Orgullo Llanero.
           </p>
         </div>
 
-        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+        <div style={{ marginTop: '16px', marginBottom: '24px' }}>
           <p style={{ marginBottom: '85px' }}>Cordialmente,</p>
           
           <div>
