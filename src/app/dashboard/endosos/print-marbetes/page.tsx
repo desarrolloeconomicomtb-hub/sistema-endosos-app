@@ -3,12 +3,17 @@ import { QRCodeSVG } from "qrcode.react";
 import PrintAction from "../[id]/print/PrintAction";
 import { headers } from "next/headers";
 
-export default async function PrintMarbetesPage(props: { searchParams: Promise<{ eventoId?: string }> }) {
+export default async function PrintMarbetesPage(props: { searchParams: Promise<{ eventoId?: string; ids?: string | string[] }> }) {
   const searchParams = await props.searchParams;
   
+  const idArray = Array.isArray(searchParams.ids)
+    ? searchParams.ids
+    : (searchParams.ids ? [searchParams.ids] : []);
+
   const endosos = await prisma.endoso.findMany({
     where: {
-      eventoId: searchParams.eventoId || undefined,
+      id: idArray.length > 0 ? { in: idArray } : undefined,
+      eventoId: idArray.length === 0 ? (searchParams.eventoId || undefined) : undefined,
       OR: [
         { exentoPago: true },
         { reciboPatente: { not: null } },

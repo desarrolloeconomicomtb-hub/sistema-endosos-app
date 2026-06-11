@@ -33,12 +33,22 @@ export default function BatchPrintForm({ children }: { children: React.ReactNode
         </label>
         
         {selectedCount > 0 && (
-          <button 
-            type="submit" 
-            className="flex items-center gap-2 bg-[#2e5e2e] text-white px-4 py-1.5 rounded hover:bg-[#1b3d1b] transition-all font-bold text-xs shadow-md animate-pulse"
-          >
-            <Printer className="w-3.5 h-3.5" /> Generar {selectedCount} Cartas Seleccionadas en Lote
-          </button>
+          <div className="flex gap-2">
+            <button 
+              type="submit" 
+              formAction="/dashboard/batch-carta"
+              className="flex items-center gap-1.5 bg-[#2e5e2e] text-white px-3 py-1.5 rounded hover:bg-[#1b3d1b] transition-all font-bold text-xs shadow-md"
+            >
+              <Printer className="w-3.5 h-3.5" /> Generar {selectedCount} Cartas en Lote
+            </button>
+            <button 
+              type="submit" 
+              formAction="/dashboard/endosos/print-marbetes"
+              className="flex items-center gap-1.5 bg-blue-700 text-white px-3 py-1.5 rounded hover:bg-blue-800 transition-all font-bold text-xs shadow-md"
+            >
+              <Printer className="w-3.5 h-3.5" /> Generar {selectedCount} Marbetes en Lote
+            </button>
+          </div>
         )}
       </div>
       {children}
