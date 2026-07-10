@@ -20,6 +20,7 @@ export default async function ReportesPage(props: {
   });
 
   const uniqueEndosoUbicaciones = await prisma.endoso.findMany({
+    where: { status: { not: 'Cancelado' } },
     select: { ubicacion: true },
   });
   const ubicaciones = Array.from(
@@ -27,6 +28,7 @@ export default async function ReportesPage(props: {
   ).sort();
 
   const uniqueEndosoTarimas = await prisma.endoso.findMany({
+    where: { status: { not: 'Cancelado' } },
     select: { tarima: true },
   });
   const tarimas = Array.from(
@@ -34,7 +36,9 @@ export default async function ReportesPage(props: {
   ).sort();
 
   // Construir consulta filtrada
-  const whereClause: any = {};
+  const whereClause: any = {
+    status: { not: 'Cancelado' }
+  };
   if (selectedEventoId) {
     whereClause.eventoId = selectedEventoId;
   }

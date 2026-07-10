@@ -11,7 +11,9 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
   const eventoId = searchParams.eventoId;
 
   // Queries
-  const totalEndosos = await prisma.endoso.count();
+  const totalEndosos = await prisma.endoso.count({
+    where: { status: { not: 'Cancelado' } }
+  });
   const totalEventos = await prisma.evento.count();
   const totalCategorias = await prisma.categoria.count();
 
@@ -19,7 +21,15 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
 
   // Data for Category Pie Chart (General)
   const endososPorCategoriaRaw = await prisma.categoria.findMany({
-    include: { _count: { select: { endosos: true } } }
+    include: { 
+      _count: { 
+        select: { 
+          endosos: {
+            where: { status: { not: 'Cancelado' } }
+          }
+        } 
+      } 
+    }
   });
   const dataCategoria = endososPorCategoriaRaw
     .map(c => ({ name: c.nombre, value: c._count.endosos }))
@@ -27,7 +37,15 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
 
   // Data for Event Bar Chart (General)
   const endososPorEventoRaw = await prisma.evento.findMany({
-    include: { _count: { select: { endosos: true } } }
+    include: { 
+      _count: { 
+        select: { 
+          endosos: {
+            where: { status: { not: 'Cancelado' } }
+          }
+        } 
+      } 
+    }
   });
   const dataEvento = endososPorEventoRaw
     .map(e => ({ name: e.nombre, value: e._count.endosos }))
@@ -35,6 +53,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
 
   // Data for Pagos Chart (General)
   const allEndosos = await prisma.endoso.findMany({
+    where: { status: { not: 'Cancelado' } },
     select: {
       reciboPatente: true,
       reciboAmbulante: true,
@@ -70,7 +89,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
   
   if (eventoId) {
     const endososEvento = await prisma.endoso.findMany({
-      where: { eventoId },
+      where: { eventoId, status: { not: 'Cancelado' } },
       select: { tarima: true, reciboPatente: true, reciboAmbulante: true, reciboBebidas: true, exentoPago: true }
     });
 
@@ -104,6 +123,7 @@ export default async function EstadisticasPage(props: { searchParams: Promise<{ 
 
   // Report by Event, Tarima, Category, and Payment status
   const reportDataQuery = await prisma.endoso.findMany({
+    where: { status: { not: 'Cancelado' } },
     select: {
       tarima: true,
       reciboPatente: true,
