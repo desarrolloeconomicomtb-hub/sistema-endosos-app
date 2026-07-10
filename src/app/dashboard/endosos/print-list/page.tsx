@@ -16,6 +16,7 @@ export default async function PrintListPage(props: {
   const endosos = await prisma.endoso.findMany({
     where: {
       eventoId,
+      status: { not: 'Cancelado' },
       ...(tarima ? { tarima } : {}),
       ...(ubicacion ? { ubicacion } : {}),
     },
