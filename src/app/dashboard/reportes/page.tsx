@@ -6,13 +6,15 @@ import ExportExcelButton from '@/components/ExportExcelButton';
 export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage(props: {
-  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string; type?: string; status?: string }>;
+  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string; type?: string; status?: string; pago?: string; inspeccion?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedEventoId = searchParams.eventoId;
   const selectedUbicacion = searchParams.ubicacion;
   const selectedTarima = searchParams.tarima;
   const selectedStatus = searchParams.status;
+  const selectedPago = searchParams.pago;
+  const selectedInspeccion = searchParams.inspeccion;
   const selectedType = searchParams.type || 'ejecutivo';
 
   // Obtener filtros para los selectores
@@ -62,18 +64,33 @@ export default async function ReportesPage(props: {
     orderBy: { issueDate: 'desc' },
   });
 
-  const totales = endosos.length;
+  // Filtrado post-consulta
+  let filteredEndosos = endosos;
+
+  if (selectedPago === 'al_dia') {
+    filteredEndosos = filteredEndosos.filter(e => e.exentoPago || e.reciboPatente || e.reciboAmbulante || e.reciboBebidas);
+  } else if (selectedPago === 'debe') {
+    filteredEndosos = filteredEndosos.filter(e => !e.exentoPago && !e.reciboPatente && !e.reciboAmbulante && !e.reciboBebidas);
+  }
+
+  if (selectedInspeccion === 'visitado') {
+    filteredEndosos = filteredEndosos.filter(e => e.visitedAt !== null);
+  } else if (selectedInspeccion === 'pendiente') {
+    filteredEndosos = filteredEndosos.filter(e => e.visitedAt === null);
+  }
+
+  const totales = filteredEndosos.length;
 
   // Agrupar por Categorías
   const categoriaCounts: Record<string, number> = {};
-  endosos.forEach((e) => {
+  filteredEndosos.forEach((e) => {
     const catName = e.categoria?.nombre || 'Sin Categoría';
     categoriaCounts[catName] = (categoriaCounts[catName] || 0) + 1;
   });
 
   // Agrupar por Estado
   const statusCounts: Record<string, number> = {};
-  endosos.forEach((e) => {
+  filteredEndosos.forEach((e) => {
     statusCounts[e.status] = (statusCounts[e.status] || 0) + 1;
   });
 
@@ -100,7 +117,7 @@ export default async function ReportesPage(props: {
           &larr; Volver al Dashboard
         </Link>
         <div className="flex gap-2">
-          <ExportExcelButton data={endosos} />
+          <ExportExcelButton data={filteredEndosos} />
           <PrintButton />
         </div>
       </div>
@@ -108,13 +125,13 @@ export default async function ReportesPage(props: {
       {/* Tabs de Selección de Tipo de Reporte - Ocultos al Imprimir */}
       <div className="flex gap-2 mb-6 border-b border-gray-200 pb-3 print:hidden">
         <Link
-          href={`/dashboard/reportes?type=ejecutivo${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}`}
+          href={`/dashboard/reportes?type=ejecutivo${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}${selectedPago ? `&pago=${selectedPago}` : ''}${selectedInspeccion ? `&inspeccion=${selectedInspeccion}` : ''}`}
           className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'ejecutivo' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
         >
           Informe Ejecutivo
         </Link>
         <Link
-          href={`/dashboard/reportes?type=distribucion${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}`}
+          href={`/dashboard/reportes?type=distribucion${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}${selectedPago ? `&pago=${selectedPago}` : ''}${selectedInspeccion ? `&inspeccion=${selectedInspeccion}` : ''}`}
           className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'distribucion' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
         >
           Distribución de Kioscos (Compacto)
@@ -126,95 +143,130 @@ export default async function ReportesPage(props: {
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           🔍 Filtrar Reporte en Tabla
         </h2>
-        <form method="GET" className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <form method="GET" className="space-y-4">
           <input type="hidden" name="type" value={selectedType} />
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Por Evento
-            </label>
-            <select
-              name="eventoId"
-              defaultValue={selectedEventoId || ''}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-            >
-              <option value="">-- Todos los Eventos --</option>
-              {eventos.map((ev) => (
-                <option key={ev.id} value={ev.id}>
-                  {ev.nombre}
-                </option>
-              ))}
-            </select>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Por Evento
+              </label>
+              <select
+                name="eventoId"
+                defaultValue={selectedEventoId || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              >
+                <option value="">-- Todos los Eventos --</option>
+                {eventos.map((ev) => (
+                  <option key={ev.id} value={ev.id}>
+                    {ev.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Por Lugar / Ubicación
+              </label>
+              <select
+                name="ubicacion"
+                defaultValue={selectedUbicacion || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              >
+                <option value="">-- Todas las Ubicaciones --</option>
+                {ubicaciones.map((ub) => (
+                  <option key={ub} value={ub}>
+                    {ub}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Por Tarima / Área
+              </label>
+              <select
+                name="tarima"
+                defaultValue={selectedTarima || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              >
+                <option value="">-- Todas las Tarimas --</option>
+                {tarimas.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Por Lugar / Ubicación
-            </label>
-            <select
-              name="ubicacion"
-              defaultValue={selectedUbicacion || ''}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-            >
-              <option value="">-- Todas las Ubicaciones --</option>
-              {ubicaciones.map((ub) => (
-                <option key={ub} value={ub}>
-                  {ub}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-100 pt-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Estado del Endoso
+              </label>
+              <select
+                name="status"
+                defaultValue={selectedStatus || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 font-bold"
+              >
+                <option value="">-- Todos (Activos) --</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Pagado">Pagado en Finanzas</option>
+                <option value="Emitido">Emitido</option>
+                <option value="Denegado">Denegado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Cumplimiento de Pago (Recibos)
+              </label>
+              <select
+                name="pago"
+                defaultValue={selectedPago || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 font-bold text-red-700"
+              >
+                <option value="">-- Todos --</option>
+                <option value="al_dia">Al Día (OK / Exento)</option>
+                <option value="debe">Faltan por Pagar (DEBE)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Visita de Inspección (QR)
+              </label>
+              <select
+                name="inspeccion"
+                defaultValue={selectedInspeccion || ''}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              >
+                <option value="">-- Todos --</option>
+                <option value="visitado">Visitados (✓)</option>
+                <option value="pendiente">Faltan por Visitar (Pendientes)</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Por Tarima / Área
-            </label>
-            <select
-              name="tarima"
-              defaultValue={selectedTarima || ''}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-            >
-              <option value="">-- Todas las Tarimas --</option>
-              {tarimas.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Por Estado de Pago
-            </label>
-            <select
-              name="status"
-              defaultValue={selectedStatus || ''}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 font-bold"
-            >
-              <option value="">-- Todos (Activos) --</option>
-              <option value="Pendiente">Pendiente</option>
-              <option value="Pagado">Pagado en Finanzas</option>
-              <option value="Emitido">Emitido</option>
-              <option value="Denegado">Denegado</option>
-              <option value="Cancelado">Cancelado</option>
-            </select>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-[#2e5e2e] text-white font-medium text-sm rounded-lg hover:bg-[#1b3d1b] transition-all shadow-sm"
-            >
-              Generar Tabla
-            </button>
-            {(selectedEventoId || selectedUbicacion || selectedTarima || selectedStatus) && (
+          <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
+            {(selectedEventoId || selectedUbicacion || selectedTarima || selectedStatus || selectedPago || selectedInspeccion) && (
               <Link
                 href={`/dashboard/reportes?type=${selectedType}`}
-                className="px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-all border border-gray-200 text-center"
+                className="px-6 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-all border border-gray-200 text-center"
               >
-                Limpiar
+                Limpiar Filtros
               </Link>
             )}
+            <button
+              type="submit"
+              className="px-6 py-2 bg-[#2e5e2e] text-white font-medium text-sm rounded-lg hover:bg-[#1b3d1b] transition-all shadow-sm"
+            >
+              Generar Informe
+            </button>
           </div>
         </form>
       </div>
@@ -285,7 +337,7 @@ export default async function ReportesPage(props: {
                     </tr>
                   </thead>
                   <tbody>
-                    {endosos.map((e) => {
+                    {filteredEndosos.map((e) => {
                       const esPagado = e.status === 'Pagado' || e.status === 'Aprobado';
                       return (
                         <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
@@ -340,7 +392,7 @@ export default async function ReportesPage(props: {
                     </tr>
                   </thead>
                   <tbody>
-                    {endosos.map((e) => (
+                    {filteredEndosos.map((e) => (
                       <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50/50">
                         <td className="p-3 font-semibold text-gray-900">{e.representante || '-'}</td>
                         <td className="p-3 font-semibold text-gray-900">{e.companyName}</td>
