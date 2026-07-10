@@ -125,7 +125,7 @@ export default async function PrintChecklistTablePage(props: {
                     <td className="py-2 px-1 border border-gray-300 text-center">
                       <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
                     </td>
-                    <td className="py-2 px-1 border border-gray-300 font-mono text-[10px] whitespace-normal break-all">
+                    <td className="py-2 px-1 border border-gray-300 font-mono text-[10px] whitespace-normal">
                       {recibosSeparados || '—'}
                     </td>
                     <td className="py-2 px-1 border border-gray-300 text-center bg-green-50/10">
