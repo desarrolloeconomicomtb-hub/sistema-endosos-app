@@ -143,41 +143,53 @@ export default async function DashboardPage(props: {
                     </td>
                   </tr>
                 ) : (
-                  endosos.map((endoso) => (
-                    <tr key={endoso.id} className="hover:bg-gray-50/80 transition-colors group">
-                      <td className="px-5 py-3.5 w-10 text-center">
-                        <input 
-                          type="checkbox" 
-                          name="ids" 
-                          value={endoso.id}
-                          className="rounded text-[#2e5e2e] focus:ring-[#2e5e2e] cursor-pointer w-4 h-4"
-                        />
-                      </td>
-                      <td className="px-5 py-3.5 font-mono text-xs text-gray-600">
-                      {endoso.controlNumber}
-                    </td>
-                    <td className="px-5 py-3.5 font-medium text-gray-900">
-                      {endoso.companyName}
-                    </td>
-                    <td className="px-5 py-3.5 text-gray-600">
-                      {endoso.evento?.nombre || 'Evento No Asignado'}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-                        {endoso.categoria?.nombre || 'Sin Categoría'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-gray-500">
-                      {new Date(endoso.issueDate).toLocaleDateString('es-PR', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex justify-end gap-2">
-                        <MarbeteButton 
-                          endosoId={endoso.id} 
-                          isPaid={!!(endoso.reciboPatente || endoso.reciboAmbulante || endoso.reciboBebidas)} 
-                          isExempt={endoso.exentoPago} 
-                        />
-                        <PrintButton endosoId={endoso.id} />
+                  endosos.map((endoso) => {
+                    const isCancelled = endoso.status === 'Cancelado';
+                    return (
+                      <tr key={endoso.id} className={`hover:bg-gray-50/80 transition-colors group ${isCancelled ? 'opacity-50 bg-gray-50' : ''}`}>
+                        <td className="px-5 py-3.5 w-10 text-center">
+                          <input 
+                            type="checkbox" 
+                            name="ids" 
+                            value={endoso.id}
+                            className="rounded text-[#2e5e2e] focus:ring-[#2e5e2e] cursor-pointer w-4 h-4"
+                          />
+                        </td>
+                        <td className="px-5 py-3.5 font-mono text-xs text-gray-600">
+                          {endoso.controlNumber}
+                        </td>
+                        <td className="px-5 py-3.5 font-medium text-gray-900">
+                          <div className="flex items-center gap-2">
+                            <span className={isCancelled ? 'line-through text-gray-500 font-normal' : ''}>
+                              {endoso.companyName}
+                            </span>
+                            {isCancelled && (
+                              <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded border border-red-200 uppercase tracking-wide">
+                                Cancelado
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5 text-gray-600">
+                          {endoso.evento?.nombre || 'Evento No Asignado'}
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                            {endoso.categoria?.nombre || 'Sin Categoría'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 text-gray-500">
+                          {new Date(endoso.issueDate).toLocaleDateString('es-PR', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </td>
+                        <td className="px-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-2">
+                            <MarbeteButton 
+                              endosoId={endoso.id} 
+                              isPaid={!!(endoso.reciboPatente || endoso.reciboAmbulante || endoso.reciboBebidas)} 
+                              isExempt={endoso.exentoPago} 
+                              status={endoso.status}
+                            />
+                            <PrintButton endosoId={endoso.id} />
                         <Link 
                           href={`/dashboard/endoso/${endoso.id}/checklist`} 
                           target="_blank"
@@ -193,8 +205,9 @@ export default async function DashboardPage(props: {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                );
+              })
+                )}
             </tbody>
           </table>
         </div>

@@ -30,7 +30,13 @@ export default async function EndosoDetallePage({ params }: { params: Promise<{ 
             <strong>Estado Actual:</strong> 
             <span style={{ 
               fontWeight: 'bold', 
-              color: endoso.status === 'Pendiente' ? '#856404' : endoso.status === 'Aprobado' || endoso.status === 'Emitido' ? '#155724' : 'var(--text-main)',
+              color: endoso.status === 'Pendiente' 
+                ? '#856404' 
+                : endoso.status === 'Aprobado' || endoso.status === 'Emitido' 
+                  ? '#155724' 
+                  : endoso.status === 'Cancelado'
+                    ? '#6c757d'
+                    : 'var(--text-main)',
               marginLeft: '0.5rem'
             }}>
               {endoso.status}
@@ -59,6 +65,7 @@ export default async function EndosoDetallePage({ params }: { params: Promise<{ 
                 <option value="Pagado">Pagado en Finanzas</option>
                 <option value="Emitido">Emitido</option>
                 <option value="Denegado">Denegado</option>
+                <option value="Cancelado">Cancelado</option>
              </select>
           </div>
           <button type="submit" className="btn-secondary">Actualizar Estado</button>
