@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import PrintAction from "../[id]/print/PrintAction";
 
-export default async function PrintChecklistTablePage(props: { searchParams: Promise<{ eventoId?: string }> }) {
+export default async function PrintChecklistTablePage(props: { 
+  searchParams: Promise<{ eventoId?: string; tarima?: string; ubicacion?: string }> 
+}) {
   const searchParams = await props.searchParams;
-  const eventoId = searchParams.eventoId;
+  const { eventoId, tarima, ubicacion } = searchParams;
 
   if (!eventoId) {
     return <div className="p-10 text-center font-bold text-xl">Debe seleccionar (filtrar) un evento en el panel principal primero para poder generar la tabla de checklist de los inspectores.</div>;
@@ -12,7 +14,11 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
   const evento = await prisma.evento.findUnique({ where: { id: eventoId } });
   
   const endosos = await prisma.endoso.findMany({
-    where: { eventoId },
+    where: {
+      eventoId,
+      ...(tarima ? { tarima } : {}),
+      ...(ubicacion ? { ubicacion } : {}),
+    },
     include: { categoria: true },
     orderBy: [
       { tarima: 'asc' },

@@ -3,22 +3,36 @@ import Link from "next/link";
 import { Printer, Edit2, FileText, Search, Plus, BadgeCheck, ClipboardList } from "lucide-react";
 import PrintButton from "./PrintButton";
 import MarbeteButton from "./MarbeteButton";
-import EventFilter from "./EventFilter";
+import Filters from "./Filters";
 import DeleteEndosoButton from "./DeleteEndosoButton";
 import BatchPrintForm from "./BatchPrintForm";
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage(props: { searchParams: Promise<{ eventoId?: string }> }) {
+export default async function DashboardPage(props: { 
+  searchParams: Promise<{ eventoId?: string; tarima?: string; ubicacion?: string }> 
+}) {
   const searchParams = await props.searchParams;
-  const eventoId = searchParams.eventoId;
+  const { eventoId, tarima, ubicacion } = searchParams;
 
   const eventos = await prisma.evento.findMany({
     orderBy: { createdAt: 'desc' }
   });
 
-  const endosos = await prisma.endoso.findMany({
+  const allEndososForFilters = await prisma.endoso.findMany({
     where: eventoId ? { eventoId } : undefined,
+    select: { tarima: true, ubicacion: true }
+  });
+
+  const distinctTarimas = Array.from(new Set(allEndososForFilters.map(e => e.tarima).filter(Boolean))) as string[];
+  const distinctUbicaciones = Array.from(new Set(allEndososForFilters.map(e => e.ubicacion).filter(Boolean))) as string[];
+
+  const endosos = await prisma.endoso.findMany({
+    where: {
+      ...(eventoId ? { eventoId } : {}),
+      ...(tarima ? { tarima } : {}),
+      ...(ubicacion ? { ubicacion } : {}),
+    },
     include: {
       evento: true,
       categoria: true,
@@ -28,16 +42,23 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
     }
   });
 
+  const queryObj: Record<string, string> = {};
+  if (eventoId) queryObj.eventoId = eventoId;
+  if (tarima) queryObj.tarima = tarima;
+  if (ubicacion) queryObj.ubicacion = ubicacion;
+  const queryString = new URLSearchParams(queryObj).toString();
+  const printQuery = queryString ? `?${queryString}` : '';
+
   return (
     <div className="space-y-8">
         <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center gap-6">
             <h1 className="text-2xl font-bold text-gray-800">Registro de Endosos</h1>
-            <EventFilter eventos={eventos} currentEventoId={eventoId} />
+            <Filters eventos={eventos} tarimas={distinctTarimas} ubicaciones={distinctUbicaciones} />
           </div>
           <div className="flex gap-3">
             <Link 
-              href={`/dashboard/endosos/print-list${eventoId ? `?eventoId=${eventoId}` : ''}`} 
+              href={`/dashboard/endosos/print-list${printQuery}`} 
               target="_blank" 
               className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors font-medium text-sm border border-blue-200 shadow-sm"
               title="Imprimir lista de cotejo para fiscalización"
@@ -45,7 +66,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
               <ClipboardList className="w-4 h-4" /> Imprimir Lista
             </Link>
             <Link 
-              href={`/dashboard/endosos/print-checklist-table${eventoId ? `?eventoId=${eventoId}` : ''}`} 
+              href={`/dashboard/endosos/print-checklist-table${printQuery}`} 
               target="_blank" 
               className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-lg hover:bg-purple-100 transition-colors font-medium text-sm border border-purple-200 shadow-sm"
               title="Imprimir tabla de checklist avanzada para inspectores"
@@ -53,14 +74,14 @@ export default async function DashboardPage(props: { searchParams: Promise<{ eve
               <ClipboardList className="w-4 h-4" /> Checklist en Tabla
             </Link>
             <Link 
-              href={`/dashboard/endosos/print-all${eventoId ? `?eventoId=${eventoId}` : ''}`} 
+              href={`/dashboard/endosos/print-all${printQuery}`} 
               target="_blank" 
               className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm border border-gray-200 shadow-sm"
             >
               <Printer className="w-4 h-4" /> Imprimir Cartas
             </Link>
             <Link 
-              href={`/dashboard/endosos/print-marbetes${eventoId ? `?eventoId=${eventoId}` : ''}`} 
+              href={`/dashboard/endosos/print-marbetes${printQuery}`} 
               target="_blank" 
               className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors font-medium text-sm border border-green-200 shadow-sm"
               title="Imprimir todos los marbetes válidos"
