@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import PrintAction from "../[id]/print/PrintAction";
 
+export const dynamic = 'force-dynamic';
+
 export default async function PrintListPage(props: { 
   searchParams: Promise<{ eventoId?: string; tarima?: string; ubicacion?: string }> 
 }) {
