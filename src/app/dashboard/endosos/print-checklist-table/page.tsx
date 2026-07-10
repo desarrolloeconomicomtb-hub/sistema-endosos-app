@@ -52,10 +52,8 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
             <th className="py-2 px-1 text-center w-12 border border-gray-400">Patente</th>
             <th className="py-2 px-1 text-center w-12 border border-gray-400">Permiso Kiosco</th>
             <th className="py-2 px-1 text-center w-12 border border-gray-400">Basura ($75)</th>
-            <th className="py-2 px-1 text-center w-12 border border-gray-400">Salud</th>
-            <th className="py-2 px-1 text-center w-12 border border-gray-400">Bomberos</th>
             <th className="py-2 px-1 text-center w-12 border border-gray-400">Bebidas Alcoh.</th>
-            <th className="py-2 px-1 text-center w-12 border border-gray-400">Extintor ABC</th>
+            <th className="py-2 px-1 text-left w-32 border border-gray-400">Recibos</th>
             <th className="py-2 px-1 text-center w-12 border border-gray-400 bg-green-50 text-green-900 font-bold">QR / Visita</th>
             <th className="py-2 px-1 text-left w-32 border border-gray-400">Notas / Deficiencias</th>
           </tr>
@@ -66,6 +64,14 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
             const isExempt = endoso.exentoPago;
             const enCumplimiento = isPaid || isExempt;
             const statusLabel = enCumplimiento ? 'OK' : 'DEBE';
+
+            const rawRecibos = [endoso.reciboPatente, endoso.reciboAmbulante, endoso.reciboBebidas]
+              .filter(Boolean) as string[];
+            const cleanRecibosList = rawRecibos
+              .flatMap(r => r.split(/[\/\s,]+/))
+              .map(num => num.trim())
+              .filter(Boolean);
+            const recibosSeparados = cleanRecibosList.join(' ');
             
             return (
               <tr key={endoso.id} className={`border-b border-gray-300 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
@@ -96,18 +102,12 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
                   </div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
-                </td>
-                <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
-                </td>
-                <td className="py-2 px-1 border border-gray-300 text-center">
                   <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white flex items-center justify-center font-bold text-[10px]">
                     {endoso.reciboBebidas ? '✓' : ''}
                   </div>
                 </td>
-                <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
+                <td className="py-2 px-1 border border-gray-300 font-mono text-[10px] whitespace-normal break-all">
+                  {recibosSeparados || '—'}
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-center bg-green-50/10">
                   <div className="w-4 h-4 mx-auto border border-green-700 rounded-sm bg-white flex items-center justify-center font-bold text-green-700 text-[10px]">
