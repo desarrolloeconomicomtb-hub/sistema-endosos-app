@@ -91,24 +91,16 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
                 
                 {/* Checkbox columns for inspector checklist */}
                 <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white flex items-center justify-center font-bold text-[10px]">
-                    {endoso.reciboPatente ? '✓' : ''}
-                  </div>
+                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white flex items-center justify-center font-bold text-[10px]">
-                    {endoso.reciboAmbulante ? '✓' : ''}
-                  </div>
+                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white flex items-center justify-center font-bold text-[10px]">
-                    {isPaid ? '✓' : ''}
-                  </div>
+                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-center">
-                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white flex items-center justify-center font-bold text-[10px]">
-                    {endoso.reciboBebidas ? '✓' : ''}
-                  </div>
+                  <div className="w-4 h-4 mx-auto border border-black rounded-sm bg-white"></div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 font-mono text-[10px] whitespace-normal break-all">
                   {recibosSeparados || '—'}
@@ -127,7 +119,6 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
 
       {/* Footer page notes */}
       <div className="mt-8 text-[9px] text-gray-500 border-t border-gray-200 pt-4 flex justify-between">
-        <p>* Los encasillados con gancho (✓) corresponden a requisitos validados automáticamente en la base de datos municipal.</p>
         <p>Fiscalización de Endosos Temporales - Municipio Autónomo de Toa Baja</p>
       </div>
     </div>
