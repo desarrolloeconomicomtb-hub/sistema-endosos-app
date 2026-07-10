@@ -11,6 +11,6 @@ export async function changeEndosoStatus(id: string, formData: FormData) {
     data: { status: status }
   });
   
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard', 'layout');
   revalidatePath(`/dashboard/endoso/${id}`);
 }

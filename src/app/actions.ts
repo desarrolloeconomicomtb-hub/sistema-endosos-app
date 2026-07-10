@@ -115,7 +115,7 @@ export async function createEndoso(formData: FormData) {
   }
 
   if (success) {
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
     redirect('/dashboard');
   } else {
     redirect(`/dashboard/endosos/nuevo?error=${encodeURIComponent(errorMsg)}`);
@@ -229,7 +229,7 @@ export async function updateEndoso(id: string, formData: FormData) {
   }
 
   if (success) {
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
     redirect('/dashboard');
   } else {
     redirect(`/dashboard/endosos/${id}/editar?error=${encodeURIComponent(errorMsg)}`);
@@ -254,7 +254,7 @@ export async function deleteEndoso(id: string) {
     await prisma.endoso.delete({
       where: { id }
     });
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
     return { success: true };
   } catch (error: any) {
     console.error("Error al eliminar el endoso:", error);
