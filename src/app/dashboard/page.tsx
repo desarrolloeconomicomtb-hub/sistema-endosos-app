@@ -156,13 +156,17 @@ export default async function DashboardPage(props: {
                           />
                         </td>
                         <td className="px-5 py-3.5 font-mono text-xs text-gray-600">
-                          {endoso.controlNumber}
+                          <Link href={`/dashboard/endoso/${endoso.id}`} className="hover:underline text-green-700 font-bold">
+                            {endoso.controlNumber}
+                          </Link>
                         </td>
                         <td className="px-5 py-3.5 font-medium text-gray-900">
                           <div className="flex items-center gap-2">
-                            <span className={isCancelled ? 'line-through text-gray-500 font-normal' : ''}>
-                              {endoso.companyName}
-                            </span>
+                            <Link href={`/dashboard/endoso/${endoso.id}`} className="hover:underline hover:text-green-900">
+                              <span className={isCancelled ? 'line-through text-gray-500 font-normal' : ''}>
+                                {endoso.companyName}
+                              </span>
+                            </Link>
                             {isCancelled && (
                               <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded border border-red-200 uppercase tracking-wide">
                                 Cancelado
