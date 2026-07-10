@@ -63,7 +63,7 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
             const isPaid = endoso.reciboPatente || endoso.reciboAmbulante || endoso.reciboBebidas;
             const isExempt = endoso.exentoPago;
             const enCumplimiento = isPaid || isExempt;
-            const statusLabel = enCumplimiento ? 'OK' : 'DEBE';
+            const statusLabel = isExempt ? 'EXENTO' : (isPaid ? 'OK' : 'DEBE');
 
             const rawRecibos = [endoso.reciboPatente, endoso.reciboAmbulante, endoso.reciboBebidas]
               .filter(Boolean) as string[];
@@ -81,7 +81,11 @@ export default async function PrintChecklistTablePage(props: { searchParams: Pro
                   <div className="text-[9px] font-mono text-gray-500 font-normal">{endoso.controlNumber}</div>
                 </td>
                 <td className="py-2 px-1 border border-gray-300 text-gray-600">{endoso.categoria?.nombre || 'Sin Categoría'}</td>
-                <td className={`py-2 px-1 border border-gray-300 text-center font-black ${enCumplimiento ? 'text-green-600 bg-green-50/20' : 'text-red-600 bg-red-50/20'}`}>
+                <td className={`py-2 px-1 border border-gray-300 text-center font-black ${
+                  isExempt 
+                    ? 'text-blue-600 bg-blue-50/20' 
+                    : (isPaid ? 'text-green-600 bg-green-50/20' : 'text-red-600 bg-red-50/20')
+                }`}>
                   {statusLabel}
                 </td>
                 

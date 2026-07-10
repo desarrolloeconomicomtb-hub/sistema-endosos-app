@@ -48,7 +48,7 @@ export default async function ChecklistEndoso({ params }: { params: Promise<{ id
              <strong>Comercio/Negocio:</strong> {endoso.companyName}<br/>
              <strong>Representante:</strong> {endoso.representante || 'N/A'}<br/>
              <strong>Categoría:</strong> {endoso.categoria?.nombre || 'Comida / Bebida'}<br/>
-             <strong>Recibos de Pago:</strong> {recibosSeparados || 'N/A'}
+             <strong>Recibos de Pago:</strong> {endoso.exentoPago ? `EXENTO ${endoso.exentoRazon ? `(${endoso.exentoRazon})` : ''}` : (recibosSeparados || 'N/A')}
            </div>
            <div>
              <strong>Número de Control:</strong> {endoso.controlNumber}<br/>

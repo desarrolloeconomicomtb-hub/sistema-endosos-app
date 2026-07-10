@@ -60,11 +60,13 @@ export default async function PrintListPage(props: { searchParams: Promise<{ eve
             const isPaid = endoso.reciboPatente || endoso.reciboAmbulante || endoso.reciboBebidas;
             const isExempt = endoso.exentoPago;
             const enCumplimiento = isPaid || isExempt;
-            const status = enCumplimiento ? 'OK' : 'DEBE';
+            const status = isExempt ? 'EXENTO' : (isPaid ? 'OK' : 'DEBE');
             
             return (
               <tr key={endoso.id} className={`border-b border-gray-300 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                <td className={`py-3 px-2 font-black ${enCumplimiento ? 'text-green-600' : 'text-red-600'}`}>{status}</td>
+                <td className={`py-3 px-2 font-black ${
+                  isExempt ? 'text-blue-600' : (isPaid ? 'text-green-600' : 'text-red-600')
+                }`}>{status}</td>
                 <td className="py-3 px-2 font-bold uppercase">{endoso.tarima || '—'}</td>
                 <td className="py-3 px-2 font-mono text-[10px] text-gray-500">{endoso.controlNumber}</td>
                 <td className="py-3 px-2 font-bold text-gray-900 uppercase">{endoso.companyName}</td>
