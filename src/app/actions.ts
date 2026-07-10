@@ -39,22 +39,26 @@ export async function createEndoso(formData: FormData) {
       });
     }
     
-    let categoriaNombre = '';
-    switch(tipoCode) {
-      case 'CO': categoriaNombre = 'Comida'; break;
-      case 'BE': categoriaNombre = 'Bebida'; break;
-      case 'AR': categoriaNombre = 'Artesanías'; break;
-      case 'PS': categoriaNombre = 'Productos y/o Servicios'; break;
-      case 'PICA': categoriaNombre = 'Pica'; break;
-      case 'MISC': categoriaNombre = 'Misceláneos'; break;
-      default: categoriaNombre = tipoCode; break;
-    }
-    
-    let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
-    if (!categoria) {
-      categoria = await prisma.categoria.create({
-        data: { nombre: categoriaNombre }
-      });
+    let finalCategoriaId = formData.get('categoriaId') as string;
+    if (!finalCategoriaId) {
+      let categoriaNombre = '';
+      switch(tipoCode) {
+        case 'CO': categoriaNombre = 'Comida'; break;
+        case 'BE': categoriaNombre = 'Bebida'; break;
+        case 'AR': categoriaNombre = 'Artesanías'; break;
+        case 'PS': categoriaNombre = 'Productos y/o Servicios'; break;
+        case 'PICA': categoriaNombre = 'Pica'; break;
+        case 'MISC': categoriaNombre = 'Misceláneos'; break;
+        default: categoriaNombre = tipoCode; break;
+      }
+      
+      let categoria = await prisma.categoria.findFirst({ where: { nombre: { contains: categoriaNombre.substring(0, 4) } } });
+      if (!categoria) {
+        categoria = await prisma.categoria.create({
+          data: { nombre: categoriaNombre }
+        });
+      }
+      finalCategoriaId = categoria.id;
     }
 
     // Generate control number securely on the server
@@ -89,7 +93,7 @@ export async function createEndoso(formData: FormData) {
         ubicacion,
         tarima: tarima || null,
         eventoId: evento.id,
-        categoriaId: categoria.id,
+        categoriaId: finalCategoriaId,
         reciboPatente: exentoPago ? null : (reciboPatente || null),
         reciboPatenteUrl: exentoPago ? null : (reciboPatenteUrl || null),
         reciboAmbulante: exentoPago ? null : (reciboAmbulante || null),
@@ -143,9 +147,9 @@ export async function updateEndoso(id: string, formData: FormData) {
     const exentoRazon = formData.get('exentoRazon') as string | null;
 
     const tipoCode = formData.get('tipoCode') as string;
-    let categoriaId: string | undefined = undefined;
+    let categoriaId = formData.get('categoriaId') as string | undefined;
 
-    if (tipoCode) {
+    if (!categoriaId && tipoCode) {
       let categoriaNombre = '';
       switch(tipoCode) {
         case 'CO': categoriaNombre = 'Comida'; break;

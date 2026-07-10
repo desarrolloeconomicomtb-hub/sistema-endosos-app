@@ -16,6 +16,10 @@ export default async function EditarEndosoPage(props: { params: Promise<{ id: st
     where: { codigo: { not: null } }
   });
 
+  const categorias = await prisma.categoria.findMany({
+    orderBy: { nombre: 'asc' }
+  });
+
   return (
     <div className="max-w-4xl mx-auto w-full">
       <div className="mb-6">
@@ -23,7 +27,7 @@ export default async function EditarEndosoPage(props: { params: Promise<{ id: st
         <p className="text-sm text-gray-500">Endoso: {endoso.controlNumber}</p>
       </div>
       
-      <EndosoForm eventos={eventos} initialData={endoso} />
+      <EndosoForm eventos={eventos} categorias={categorias} initialData={endoso} />
     </div>
   );
 }

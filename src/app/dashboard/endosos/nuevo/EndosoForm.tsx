@@ -4,9 +4,49 @@ import { useState, useEffect } from 'react';
 import { createEndoso, getNextSequence, updateEndoso } from '@/app/actions';
 import { FileEdit } from 'lucide-react';
 
-export default function EndosoForm({ eventos = [], initialData, error }: { eventos?: any[], initialData?: any, error?: string }) {
+function getCategoryCode(nombre: string): string {
+  const norm = nombre.toLowerCase().trim();
+  if (norm.includes('comida')) return 'CO';
+  if (norm.includes('bebida')) return 'BE';
+  if (norm.includes('artesan')) return 'AR';
+  if (norm.includes('producto') || norm.includes('servicio')) return 'PS';
+  if (norm.includes('pica')) return 'PICA';
+  if (norm.includes('miscelan')) return 'MISC';
+  
+  const clean = norm.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+  if (clean.length <= 4) return clean.toUpperCase();
+  return clean.substring(0, 3).toUpperCase();
+}
+
+export default function EndosoForm({ 
+  eventos = [], 
+  categorias = [], 
+  initialData, 
+  error 
+}: { 
+  eventos?: any[], 
+  categorias?: any[], 
+  initialData?: any, 
+  error?: string 
+}) {
   const [evento, setEvento] = useState(() => initialData ? initialData.controlNumber.split('-')[0] : 'FFC');
   const [tipo, setTipo] = useState(() => initialData ? initialData.controlNumber.split('-')[2] : 'CO');
+  
+  const [selectedCatId, setSelectedCatId] = useState(() => initialData?.categoriaId || '');
+  
+  useEffect(() => {
+    if (!selectedCatId && categorias.length > 0) {
+      setSelectedCatId(categorias[0].id);
+    }
+  }, [categorias, selectedCatId]);
+
+  useEffect(() => {
+    const found = categorias.find(c => c.id === selectedCatId);
+    if (found) {
+      setTipo(getCategoryCode(found.nombre));
+    }
+  }, [selectedCatId, categorias]);
+
   const [controlNumber, setControlNumber] = useState(initialData?.controlNumber || 'Generando...');
   const [isExento, setIsExento] = useState(initialData?.exentoPago || false);
   const [patenteFile, setPatenteFile] = useState(initialData?.reciboPatenteUrl || '');
@@ -119,18 +159,32 @@ export default function EndosoForm({ eventos = [], initialData, error }: { event
           </div>
           <div>
             <select 
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
+              value={selectedCatId}
+              onChange={(e) => setSelectedCatId(e.target.value)}
               className="w-full h-full min-h-[36px] bg-[#fff599] border-none px-3 py-2 text-sm focus:ring-0 focus:outline-none"
             >
-              <option value="CO">CO (Comida)</option>
-              <option value="BE">BE (Bebida)</option>
-              <option value="AR">AR (Artesanías)</option>
-              <option value="PS">PS (Productos y Servicios)</option>
-              <option value="PICA">PICA (Pica)</option>
-              <option value="MISC">MISC (Misceláneos)</option>
+              {categorias.length === 0 ? (
+                <>
+                  <option value="CO">CO (Comida)</option>
+                  <option value="BE">BE (Bebida)</option>
+                  <option value="AR">AR (Artesanías)</option>
+                  <option value="PS">PS (Productos y Servicios)</option>
+                  <option value="PICA">PICA (Pica)</option>
+                  <option value="MISC">MISC (Misceláneos)</option>
+                </>
+              ) : (
+                categorias.map((cat) => {
+                  const code = getCategoryCode(cat.nombre);
+                  return (
+                    <option key={cat.id} value={cat.id}>
+                      {code} ({cat.nombre})
+                    </option>
+                  );
+                })
+              )}
             </select>
             <input type="hidden" name="tipoCode" value={tipo} />
+            <input type="hidden" name="categoriaId" value={selectedCatId} />
           </div>
         </div>
 
