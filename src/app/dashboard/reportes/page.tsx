@@ -6,12 +6,13 @@ import ExportExcelButton from '@/components/ExportExcelButton';
 export const dynamic = 'force-dynamic';
 
 export default async function ReportesPage(props: {
-  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string; type?: string }>;
+  searchParams: Promise<{ eventoId?: string; ubicacion?: string; tarima?: string; type?: string; status?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedEventoId = searchParams.eventoId;
   const selectedUbicacion = searchParams.ubicacion;
   const selectedTarima = searchParams.tarima;
+  const selectedStatus = searchParams.status;
   const selectedType = searchParams.type || 'ejecutivo';
 
   // Obtener filtros para los selectores
@@ -36,9 +37,12 @@ export default async function ReportesPage(props: {
   ).sort();
 
   // Construir consulta filtrada
-  const whereClause: any = {
-    status: { not: 'Cancelado' }
-  };
+  const whereClause: any = {};
+  if (selectedStatus) {
+    whereClause.status = selectedStatus;
+  } else {
+    whereClause.status = { not: 'Cancelado' };
+  }
   if (selectedEventoId) {
     whereClause.eventoId = selectedEventoId;
   }
@@ -104,13 +108,13 @@ export default async function ReportesPage(props: {
       {/* Tabs de Selección de Tipo de Reporte - Ocultos al Imprimir */}
       <div className="flex gap-2 mb-6 border-b border-gray-200 pb-3 print:hidden">
         <Link
-          href={`/dashboard/reportes?type=ejecutivo${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}`}
+          href={`/dashboard/reportes?type=ejecutivo${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}`}
           className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'ejecutivo' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
         >
           Informe Ejecutivo
         </Link>
         <Link
-          href={`/dashboard/reportes?type=distribucion${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}`}
+          href={`/dashboard/reportes?type=distribucion${selectedEventoId ? `&eventoId=${selectedEventoId}` : ''}${selectedUbicacion ? `&ubicacion=${selectedUbicacion}` : ''}${selectedTarima ? `&tarima=${selectedTarima}` : ''}${selectedStatus ? `&status=${selectedStatus}` : ''}`}
           className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${selectedType === 'distribucion' ? 'bg-[#2e5e2e] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
         >
           Distribución de Kioscos (Compacto)
@@ -122,7 +126,7 @@ export default async function ReportesPage(props: {
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           🔍 Filtrar Reporte en Tabla
         </h2>
-        <form method="GET" className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form method="GET" className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           <input type="hidden" name="type" value={selectedType} />
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
@@ -178,6 +182,24 @@ export default async function ReportesPage(props: {
             </select>
           </div>
 
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Por Estado de Pago
+            </label>
+            <select
+              name="status"
+              defaultValue={selectedStatus || ''}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 font-bold"
+            >
+              <option value="">-- Todos (Activos) --</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Pagado">Pagado en Finanzas</option>
+              <option value="Emitido">Emitido</option>
+              <option value="Denegado">Denegado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+
           <div className="flex gap-2">
             <button
               type="submit"
@@ -185,7 +207,7 @@ export default async function ReportesPage(props: {
             >
               Generar Tabla
             </button>
-            {(selectedEventoId || selectedUbicacion || selectedTarima) && (
+            {(selectedEventoId || selectedUbicacion || selectedTarima || selectedStatus) && (
               <Link
                 href={`/dashboard/reportes?type=${selectedType}`}
                 className="px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-all border border-gray-200 text-center"
@@ -219,6 +241,11 @@ export default async function ReportesPage(props: {
           {selectedTarima && (
             <p className="font-semibold text-gray-900">
               Tarima / Área: {selectedTarima}
+            </p>
+          )}
+          {selectedStatus && (
+            <p className="font-semibold text-red-700 uppercase">
+              Estado de Pago: {selectedStatus}
             </p>
           )}
           <p className="text-xs text-gray-500 mt-2">Generado: {currentDate}</p>
